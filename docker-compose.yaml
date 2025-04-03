@@ -1,4 +1,20 @@
 services:
+  mariadb:
+    image: mariadb:11.7
+    container_name: mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql
+      - ./mariadb:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+
   kafka:
     image: confluentinc/cp-kafka:7.5.1
     container_name: kafka
@@ -27,3 +43,4 @@ services:
 
 volumes:
   kraft-data:
+  mariadb-data:
