@@ -1,0 +1,4 @@
+apiVersion: v1
+name: user-server
+description: A Helm chart for User Server
+version: 0.1.0
