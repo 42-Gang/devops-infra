@@ -1,0 +1,43 @@
+# helm/traefik/values.yaml
+
+accessLog:
+  enabled: true
+  fields:
+    defaultMode: keep
+
+# ▶ Traefik 구동 인자
+additionalArguments:
+  - "--entryPoints.web.address=:80"
+  - "--api.dashboard=true"
+  - "--api.insecure=true"
+
+# ▶ 컨테이너 및 서비스 포트 (루트 ports 섹션)
+ports:
+  web:
+    # 컨테이너가 실제로 바인딩하는 포트
+    port: 80
+    # Service 가 외부로 노출할 포트 (optional; defaults to port)
+    # 여기서는 같게 놓아도 됩니다
+    expose:
+      exposedPort: 80
+    # Service 가 Pod 로 전달할 targetPort
+    targetPort: 80
+    # NodePort 를 명시하고 싶다면
+    nodePort: 32603
+
+# ▶ 서비스 타입 및 기타 (service: ~)
+service:
+  type: LoadBalancer
+  # annotations, labels 등은 여기에
+  annotations: {}
+  labels: {}
+
+# ▶ 기본 Ingress 사용
+providers:
+  kubernetesCRD:
+    enabled: false
+  kubernetesIngress:
+    enabled: true
+
+rbac:
+  enabled: true

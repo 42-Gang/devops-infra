@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: kungbi/user-server
+  repository: kungbi/auth-server
   tag: latest
   pullPolicy: Always
 
@@ -10,6 +10,6 @@ service:
   port: 3000
 
 env:
-  SECRET_NAME: user-server-secret
+  SECRET_NAME: auth-server-secret
 
 resources: {}

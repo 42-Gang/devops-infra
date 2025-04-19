@@ -36,8 +36,13 @@ install-mariadb:
 		-n $(NAMESPACE) \
 		-f helm/mariadb-user/values.yaml
 
+	helm install mariadb-auth $(CHART_REPO)/mariadb \
+    		-n $(NAMESPACE) \
+    		-f helm/mariadb-auth/values.yaml
+
 uninstall-mariadb:
 	helm uninstall mariadb-user -n $(NAMESPACE)
+	helm uninstall mariadb-auth -n $(NAMESPACE)
 
 # ----------------------------------
 # Redis
@@ -48,8 +53,13 @@ install-redis:
 		-n $(NAMESPACE) \
 		-f helm/redis-user/values.yaml
 
+	helm install redis-auth $(CHART_REPO)/redis \
+    		-n $(NAMESPACE) \
+    		-f helm/redis-auth/values.yaml
+
 uninstall-redis:
 	helm uninstall redis-user -n $(NAMESPACE)
+	helm uninstall redis-auth -n $(NAMESPACE)
 
 # ----------------------------------
 # Kafka (KRaft 모드)
@@ -81,6 +91,21 @@ deploy-user:
 uninstall-user:
 	helm uninstall user-server -n $(NAMESPACE)
 
+rollback-user:
+	helm rollback user-server -n $(NAMESPACE)
+
+deploy-auth:
+	helm upgrade --install auth-server ./helm/auth-server \
+		-n $(NAMESPACE) \
+		--set image.repository=$(REGISTRY)/auth-server \
+		--set image.tag=$(IMAGE_TAG)
+
+uninstall-auth:
+	helm uninstall auth-server -n $(NAMESPACE)
+
+rollback-auth:
+	helm rollback auth-server -n $(NAMESPACE)
+
 # ----------------------------------
 # Secrets
 # ----------------------------------
@@ -88,6 +113,8 @@ uninstall-user:
 apply-secrets:
 	kubectl apply -f ./secrets/user-mariadb-secret.yaml -n $(NAMESPACE)
 	kubectl apply -f ./secrets/user-server-secret.yaml -n $(NAMESPACE)
+	kubectl apply -f ./secrets/auth-server-secret.yaml -n $(NAMESPACE)
+	kubectl apply -f ./secrets/auth-mariadb-secret.yaml -n $(NAMESPACE)
 
 
 # ----------------------------------
@@ -96,11 +123,18 @@ apply-secrets:
 
 install: add-helm-repo create-namespace apply-secrets install-mariadb install-redis install-kafka
 
-deploy-all: deploy-user
+deploy-all: deploy-user deploy-auth
 
 reset:
 	helm uninstall mariadb-user -n $(NAMESPACE) || true
+	helm uninstall mariadb-auth -n $(NAMESPACE) || true
+
 	helm uninstall redis-user -n $(NAMESPACE) || true
+	helm uninstall redis-auth -n $(NAMESPACE) || true
+
 	helm uninstall kafka -n $(NAMESPACE) || true
+
 	helm uninstall user-server -n $(NAMESPACE) || true
+	helm uninstall auth-server -n $(NAMESPACE) || true
+
 	kubectl delete all,cm,secret,pvc -n $(NAMESPACE) || true

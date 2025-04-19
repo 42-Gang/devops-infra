@@ -1,0 +1,12 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: strip-auth-headers
+  namespace: msa
+spec:
+  headers:
+    # 클라이언트가 보낸 이 헤더들은 모두 지워 버립니다
+    removeRequestHeaders:
+      - X-User-Id
+      - X-Internal
+      - X-Authenticated
