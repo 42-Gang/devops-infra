@@ -1,6 +1,4 @@
 additionalArguments:
-  - "--entryPoints.web.address=:80"
-  - "--entryPoints.websecure.address=:443"
   - "--api.dashboard=true"
   - "--api.insecure=true"
   - "--providers.kubernetescrd"
@@ -8,10 +6,8 @@ additionalArguments:
 
 ports:
   web:
-    port: 80
-    targetPort: 80
-#    expose:
-#      exposedPort: 80
+    expose:
+      exposedPort: 80
     protocol: TCP
 
 service:
@@ -23,7 +19,7 @@ providers:
     namespace:
       - msa
   kubernetesIngress:
-    enabled: true
+    enabled: false
 
 rbac:
   enabled: true
