@@ -1,0 +1,8 @@
+auth:
+  existingSecret: user-mariadb-secret
+  username: user
+  database: database
+
+primary:
+  service:
+    type: ClusterIP

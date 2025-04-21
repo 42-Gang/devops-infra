@@ -1,0 +1,31 @@
+additionalArguments:
+  - "--api.dashboard=true"
+  - "--api.insecure=true"
+  - "--providers.kubernetescrd"
+  - "--accesslog=true"
+
+ports:
+  web:
+    expose:
+      exposedPort: 80
+    protocol: TCP
+
+service:
+  type: LoadBalancer
+
+providers:
+  kubernetesCRD:
+    enabled: true
+    namespace:
+      - msa
+  kubernetesIngress:
+    enabled: false
+
+rbac:
+  enabled: true
+
+log:
+  level: DEBUG
+
+accessLog:
+  enabled: true

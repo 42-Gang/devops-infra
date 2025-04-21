@@ -1,0 +1,40 @@
+replicaCount: 1
+
+kraft:
+  enabled: true
+  clusterId: "kraft-cluster-id-01"
+
+controller:
+  quorum:
+    voters: "0@kafka-0.kafka-headless.msa.svc.cluster.local:9093"
+
+listeners:
+  client:
+    protocol: PLAINTEXT
+    port: 9092
+  internal:
+    protocol: PLAINTEXT
+    port: 9094
+  controller:
+    protocol: PLAINTEXT
+    port: 9093
+
+advertisedListeners:
+  client:
+    name: CLIENT
+    port: 9092
+    address: kafka-0.kafka-headless.msa.svc.cluster.local
+  internal:
+    name: INTERNAL
+    port: 9094
+    address: kafka-0.kafka-headless.msa.svc.cluster.local
+
+interBrokerListenerName: internal
+controllerListenerNames: controller
+
+zookeeper:
+  enabled: false
+
+extraEnvVars:
+  - name: ALLOW_PLAINTEXT_LISTENER
+    value: "yes"
