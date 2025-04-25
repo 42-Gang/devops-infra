@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="KubernetesApiSettings">
+    <option name="namespaces">
+      <list>
+        <option value="msa" />
+        <option value="traefik" />
+      </list>
+    </option>
+  </component>
+</project>
