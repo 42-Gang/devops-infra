@@ -56,5 +56,10 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
                   key: KAFKA_BROKER
+            - name: AUTH_SERVER_URL
+              valueFrom:
+                  secretKeyRef:
+                    name: {{ .Values.env.SECRET_NAME }}
+                    key: AUTH_SERVER_URL
             - name: FASTIFY_PORT
               value: "{{ .Values.service.port }}"

@@ -36,10 +36,10 @@ spec:
           port: 3000
           namespace: msa
 
-    - match: PathPrefix(`/socket.io`)
+    - match: PathPrefix(`/ws/user`)
       kind: Rule
-#      middlewares:
-#        - name: ws-middleware
+      middlewares:
+        - name: ws-middleware
       services:
         - name: user-server
           port: 3000
