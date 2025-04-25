@@ -7,15 +7,6 @@ spec:
   entryPoints:
     - web
   routes:
-#    - match: Method(`OPTIONS`) && PathPrefix(`/api/v1`)
-#      kind: Rule
-#      middlewares:
-#        - name: cors
-#      services:
-#        - name: user-server    # 또는 아무 서비스나 상관없음
-#          port: 3000
-#          namespace: msa
-
     - match: PathPrefix(`/api/v1/auth`)
       kind: Rule
       middlewares:
@@ -40,6 +31,15 @@ spec:
       middlewares:
         - name: cors
         - name: auth-middleware
+      services:
+        - name: user-server
+          port: 3000
+          namespace: msa
+
+    - match: PathPrefix(`/socket.io`)
+      kind: Rule
+#      middlewares:
+#        - name: ws-middleware
       services:
         - name: user-server
           port: 3000

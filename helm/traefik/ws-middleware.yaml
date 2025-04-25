@@ -1,0 +1,9 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ws-middleware
+  namespace: msa
+spec:
+  replacePathRegex:
+    regex: ^/ws/(.*)
+    replacement: /$1
