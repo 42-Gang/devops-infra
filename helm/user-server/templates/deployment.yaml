@@ -25,17 +25,17 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
-                  key: DB_URL
+                  key: USER_DB_URL
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
-                  key: REDIS_HOST
+                  key: USER_REDIS_HOST
             - name: REDIS_PORT
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
-                  key: REDIS_PORT
+                  key: USER_REDIS_PORT
             - name: JWT_SECRET
               valueFrom:
                 secretKeyRef:
