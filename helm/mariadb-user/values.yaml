@@ -6,3 +6,32 @@ auth:
 primary:
   service:
     type: ClusterIP
+
+  # ──────────────── livenessProbe 덮어쓰기 ────────────────
+  livenessProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+    exec:
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          exec mysqladmin status -u"$MARIADB_USER" -p"$MARIADB_PASSWORD"
+
+  # ──────────────── readinessProbe 덮어쓰기 ────────────────
+  readinessProbe:
+    enabled: true
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    successThreshold: 1
+    failureThreshold: 6
+    exec:
+      command:
+        - /bin/bash
+        - -ec
+        - |
+          exec mysqladmin status -u"$MARIADB_USER" -p"$MARIADB_PASSWORD"
