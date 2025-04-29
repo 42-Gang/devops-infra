@@ -6,3 +6,10 @@ auth:
 primary:
   service:
     type: ClusterIP
+
+  persistence:
+    storageClass: local-path
+
+secondary:
+  persistence:
+    storageClass: local-path
