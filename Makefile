@@ -130,6 +130,10 @@ deploy-traefik:
 	kubectl apply -f ./traefik/cors-middleware.yaml
 	kubectl apply -f ./traefik/ingressroute.yaml
 
+delete-traefik:
+	helm uninstall traefik -n $(TRAEFIK_NAMESPACE)
+	kubectl delete all,cm,secret,pvc -n $(TRAEFIK_NAMESPACE) || true
+
 # ----------------------------------
 # Secrets
 # ----------------------------------
@@ -147,7 +151,7 @@ install: add-helm-repo create-namespace apply-secrets install-mariadb install-re
 
 deploy-all: deploy-user deploy-auth
 
-reset:
+reset: delete-traefik
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE) || true
 	helm uninstall mariadb-auth -n $(MSA_NAMESPACE) || true
 
