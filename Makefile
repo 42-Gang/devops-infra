@@ -132,7 +132,6 @@ deploy-traefik:
 
 delete-traefik:
 	helm uninstall traefik -n $(TRAEFIK_NAMESPACE)
-	kubectl delete all,cm,secret,pvc -n $(TRAEFIK_NAMESPACE) || true
 
 # ----------------------------------
 # Secrets
