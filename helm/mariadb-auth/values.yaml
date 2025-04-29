@@ -6,3 +6,20 @@ auth:
 primary:
   service:
     type: ClusterIP
+
+
+livenessProbe:
+  enabled: true
+  command:
+    - /bin/bash
+    - -ec
+    - |
+      exec mysqladmin status -uroot -p"$MARIADB_ROOT_PASSWORD"
+
+readinessProbe:
+  enabled: true
+  command:
+    - /bin/bash
+    - -ec
+    - |
+      exec mysqladmin status -uroot -p"$MARIADB_ROOT_PASSWORD"

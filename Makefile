@@ -48,8 +48,8 @@ install-mariadb: apply-secrets
 		-f helm/mariadb-auth/values.yaml
 
 uninstall-mariadb:
-	helm uninstall mariadb-user -n $(NAMESPACE)
-	helm uninstall mariadb-auth -n $(NAMESPACE)
+	helm uninstall mariadb-user -n $(MSA_NAMESPACE)
+	helm uninstall mariadb-auth -n $(MSA_NAMESPACE)
 
 # ----------------------------------
 # Redis
@@ -163,3 +163,4 @@ reset:
 	helm uninstall auth-server -n $(MSA_NAMESPACE) || true
 
 	kubectl delete all,cm,secret,pvc -n $(MSA_NAMESPACE) || true
+	kubectl delete all,cm,secret,pvc || true
