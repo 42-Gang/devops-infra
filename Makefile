@@ -18,7 +18,9 @@ CHART_URL := https://charts.bitnami.com/bitnami
 
 add-helm-repo:
 	helm repo add $(CHART_REPO) $(CHART_URL)
+	helm repo add traefik https://traefik.github.io/charts
 	helm repo update
+
 
 # ----------------------------------
 # Namespace
