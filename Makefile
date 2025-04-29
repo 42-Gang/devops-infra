@@ -89,7 +89,7 @@ uninstall-kafka:
 # Deploy User Server (Helm Chart 사용 가정)
 # ----------------------------------
 
-deploy-user:
+deploy-user: apply-secrets
 	helm upgrade --install user-server ./helm/user-server \
 		-n $(MSA_NAMESPACE) \
 		--set image.repository=$(REGISTRY)/$(USER_SERVER_IMAGE_NAME) \
@@ -101,7 +101,7 @@ uninstall-user:
 rollback-user:
 	helm rollback user-server -n $(MSA_NAMESPACE)
 
-deploy-auth:
+deploy-auth: apply-secrets
 	helm upgrade --install auth-server ./helm/auth-server \
 		-n $(MSA_NAMESPACE) \
 		--set image.repository=$(REGISTRY)/$(AUTH_SERVER_IMAGE_NAME) \
