@@ -90,7 +90,7 @@ uninstall-kafka:
 deploy-user:
 	helm upgrade --install user-server ./helm/user-server \
 		-n $(MSA_NAMESPACE) \
-		--set image.repository=$(REGISTRY)/$(IMAGE_NAME) \
+		--set image.repository=$(REGISTRY)/$(USER_SERVER_IMAGE_NAME) \
 		--set image.tag=$(IMAGE_TAG)
 
 uninstall-user:
@@ -102,7 +102,7 @@ rollback-user:
 deploy-auth:
 	helm upgrade --install auth-server ./helm/auth-server \
 		-n $(MSA_NAMESPACE) \
-		--set image.repository=$(REGISTRY)/auth-server \
+		--set image.repository=$(REGISTRY)/$(AUTH_SERVER_IMAGE_NAME) \
 		--set image.tag=$(IMAGE_TAG)
 
 uninstall-auth:
@@ -117,11 +117,16 @@ rollback-auth:
 # ----------------------------------
 
 deploy-traefik:
-	helm install traefik traefik/traefik \
+	helm upgrade traefik traefik/traefik \
+		--install \
 		-n $(TRAEFIK_NAMESPACE) \
 		--values helm/traefik/values.yaml \
 		-f helm/traefik/values.yaml \
 		--skip-crds=false
+	kubectl apply -f ./traefik/auth-middleware.yaml
+	kubectl apply -f ./traefik/ws-middleware.yaml
+	kubectl apply -f ./traefik/cors-middleware.yaml
+	kubectl apply -f ./traefik/ingressroute.yaml
 
 # ----------------------------------
 # Secrets
