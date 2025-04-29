@@ -6,9 +6,3 @@ auth:
 primary:
   service:
     type: ClusterIP
-
-  # TODO: 활성화 시켜야함
-  livenessProbe:
-    enabled: false
-  readinessProbe:
-    enabled: false

@@ -146,7 +146,7 @@ apply-secrets:
 # All-in-One
 # ----------------------------------
 
-install: add-helm-repo create-namespace apply-secrets install-mariadb install-redis install-kafka
+install: create-namespace apply-secrets install-mariadb install-redis install-kafka
 
 deploy-all: deploy-user deploy-auth
 
