@@ -39,11 +39,13 @@ delete-namespace:
 # ----------------------------------
 
 install-mariadb: apply-secrets
-	helm install mariadb-user $(CHART_REPO)/mariadb \
+	helm upgrade mariadb-user $(CHART_REPO)/mariadb \
+		--install \
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-user/values.yaml
 
-	helm install mariadb-auth $(CHART_REPO)/mariadb \
+	helm upgrade mariadb-auth $(CHART_REPO)/mariadb \
+		--install \
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-auth/values.yaml
 
