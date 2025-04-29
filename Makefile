@@ -36,7 +36,7 @@ delete-namespace:
 # MariaDB
 # ----------------------------------
 
-install-mariadb:
+install-mariadb: apply-secrets
 	helm install mariadb-user $(CHART_REPO)/mariadb \
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-user/values.yaml
