@@ -1,5 +1,5 @@
 auth:
-  existingSecret: auth-mariadb-secret
+  existingSecret: mariadb-secret
   username: user
   database: database
 
