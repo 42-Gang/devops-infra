@@ -173,11 +173,14 @@ apply-secrets:
 	kubectl apply -f ./secrets/mariadb-secret.yaml -n $(MSA_NAMESPACE)
 
 
+apply-local-path:
+	kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
+
 # ----------------------------------
 # All-in-One
 # ----------------------------------
 
-install: create-namespace apply-secrets install-mariadb install-redis install-kafka
+install: apply-local-path create-namespace apply-secrets install-mariadb install-redis install-kafka
 
 deploy-all: deploy-user deploy-auth deploy-chat
 
