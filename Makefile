@@ -49,9 +49,15 @@ install-mariadb: apply-secrets
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-auth/values.yaml
 
+	helm upgrade mariadb-chat $(CHART_REPO)/mariadb \
+		--install \
+		-n $(MSA_NAMESPACE) \
+		-f helm/mariadb-chat/values.yaml
+
 uninstall-mariadb:
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE)
 	helm uninstall mariadb-auth -n $(MSA_NAMESPACE)
+	helm uninstall mariadb-chat -n $(MSA_NAMESPACE)
 
 # ----------------------------------
 # Redis
@@ -66,9 +72,14 @@ install-redis:
 		-n $(MSA_NAMESPACE) \
 		-f helm/redis-auth/values.yaml
 
+	helm install redis-chat $(CHART_REPO)/redis \
+    		-n $(MSA_NAMESPACE) \
+    		-f helm/redis-chat/values.yaml
+
 uninstall-redis:
 	helm uninstall redis-user -n $(MSA_NAMESPACE)
 	helm uninstall redis-auth -n $(MSA_NAMESPACE)
+	helm uninstall redis-chat -n $(MSA_NAMESPACE)
 
 # ----------------------------------
 # Kafka (KRaft 모드)
@@ -115,6 +126,17 @@ uninstall-auth:
 rollback-auth:
 	helm rollback auth-server -n $(MSA_NAMESPACE)
 
+deploy-chat: apply-secrets
+	helm upgrade --install chat-server ./helm/chat-server \
+		-n $(MSA_NAMESPACE) \
+		--set image.repository=$(REGISTRY)/$(CHAT_SERVER_IMAGE_NAME) \
+		--set image.tag=$(IMAGE_TAG)
+
+uninstall-chat:
+	helm uninstall chat-server -n $(MSA_NAMESPACE)
+
+rollback-chat:
+	helm rollback chat-server -n $(MSA_NAMESPACE)
 
 # ----------------------------------
 # Traefik
@@ -150,19 +172,22 @@ apply-secrets:
 
 install: create-namespace apply-secrets install-mariadb install-redis install-kafka
 
-deploy-all: deploy-user deploy-auth
+deploy-all: deploy-user deploy-auth deploy-chat
 
 reset:
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE) || true
 	helm uninstall mariadb-auth -n $(MSA_NAMESPACE) || true
+	helm uninstall mariadb-chat -n $(MSA_NAMESPACE) || true
 
 	helm uninstall redis-user -n $(MSA_NAMESPACE) || true
 	helm uninstall redis-auth -n $(MSA_NAMESPACE) || true
+	helm uninstall redis-chat -n $(MSA_NAMESPACE) || true
 
 	helm uninstall kafka -n $(MSA_NAMESPACE) || true
 
 	helm uninstall user-server -n $(MSA_NAMESPACE) || true
 	helm uninstall auth-server -n $(MSA_NAMESPACE) || true
+	helm uninstall chat-server -n $(MSA_NAMESPACE) || true
 
 	kubectl delete all,cm,secret,pvc -n $(MSA_NAMESPACE) || true
 	kubectl delete all,cm,secret,pvc || true
