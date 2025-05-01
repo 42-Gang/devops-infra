@@ -5,6 +5,23 @@ master:
   service:
     type: ClusterIP
 
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
 architecture: replication
+
 replica:
   replicaCount: 1
+
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
