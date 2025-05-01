@@ -36,11 +36,30 @@ spec:
           port: 3000
           namespace: msa
 
+    - match: PathPrefix(`/api/v1/chat`)
+      kind: Rule
+      middlewares:
+        - name: cors
+        - name: auth-middleware
+      services:
+        - name: chat-server
+          port: 3000
+          namespace: msa
+
     - match: PathPrefix(`/ws/user`)
       kind: Rule
       middlewares:
         - name: ws-middleware
       services:
         - name: user-server
+          port: 3000
+          namespace: msa
+
+    - match: PathPrefix(`/ws/chat`)
+      kind: Rule
+      middlewares:
+        - name: ws-middleware
+      services:
+        - name: chat-server
           port: 3000
           namespace: msa
