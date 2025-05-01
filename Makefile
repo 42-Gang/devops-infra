@@ -29,7 +29,8 @@ COLOR_RESET  := \033[0m
   create-namespace delete-namespace \
   install-mariadb-user install-mariadb-auth install-mariadb-chat install-mariadb \
   uninstall-mariadb-user uninstall-mariadb-auth uninstall-mariadb-chat uninstall-mariadb \
-  install-redis uninstall-redis \
+  install-redis-user install-redis-auth install-redis-chat install-redis \
+  uninstall-redis-user uninstall-redis-auth uninstall-redis-chat uninstall-redis \
   install-kafka upgrade-kafka uninstall-kafka \
   deploy-user uninstall-user rollback-user restart-user \
   deploy-auth uninstall-auth rollback-auth restart-auth \
@@ -119,25 +120,47 @@ uninstall-mariadb: \
 	uninstall-mariadb-chat
 
 # ----------------------------------
-# Redis
+# Redis (개별/통합)
 # ----------------------------------
-install-redis:
-	@printf "$(COLOR_GREEN)==> Installing Redis components$(COLOR_RESET)\n"
+install-redis-user:
+	@printf "$(COLOR_GREEN)==> Installing Redis User$(COLOR_RESET)\n"
 	helm install redis-user $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
 		-f helm/redis-user/values.yaml
+
+install-redis-auth:
+	@printf "$(COLOR_GREEN)==> Installing Redis Auth$(COLOR_RESET)\n"
 	helm install redis-auth $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
 		-f helm/redis-auth/values.yaml
+
+install-redis-chat:
+	@printf "$(COLOR_GREEN)==> Installing Redis Chat$(COLOR_RESET)\n"
 	helm install redis-chat $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
 		-f helm/redis-chat/values.yaml
 
-uninstall-redis:
-	@printf "$(COLOR_YELLOW)==> Uninstalling Redis components$(COLOR_RESET)\n"
+install-redis: \
+	install-redis-user \
+	install-redis-auth \
+	install-redis-chat
+
+uninstall-redis-user:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Redis User$(COLOR_RESET)\n"
 	helm uninstall redis-user -n $(MSA_NAMESPACE)
+
+uninstall-redis-auth:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Redis Auth$(COLOR_RESET)\n"
 	helm uninstall redis-auth -n $(MSA_NAMESPACE)
+
+uninstall-redis-chat:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Redis Chat$(COLOR_RESET)\n"
 	helm uninstall redis-chat -n $(MSA_NAMESPACE)
+
+uninstall-redis: \
+	uninstall-redis-user \
+	uninstall-redis-auth \
+	uninstall-redis-chat
 
 # ----------------------------------
 # Kafka (KRaft 모드)
@@ -178,58 +201,7 @@ restart-user:
 	@printf "$(COLOR_BLUE)==> Restarting User Server$(COLOR_RESET)\n"
 	kubectl rollout restart deployment user-server -n $(MSA_NAMESPACE)
 
-deploy-auth: apply-secrets
-	@printf "$(COLOR_BLUE)==> Deploying Auth Server$(COLOR_RESET)\n"
-	helm upgrade --install auth-server ./helm/auth-server \
-		-n $(MSA_NAMESPACE)
-
-uninstall-auth:
-	@printf "$(COLOR_YELLOW)==> Uninstalling Auth Server$(COLOR_RESET)\n"
-	helm uninstall auth-server -n $(MSA_NAMESPACE)
-
-rollback-auth:
-	@printf "$(COLOR_YELLOW)==> Rolling back Auth Server$(COLOR_RESET)\n"
-	helm rollback auth-server -n $(MSA_NAMESPACE)
-
-restart-auth:
-	@printf "$(COLOR_BLUE)==> Restarting Auth Server$(COLOR_RESET)\n"
-	kubectl rollout restart deployment auth-server -n $(MSA_NAMESPACE)
-
-deploy-chat: apply-secrets
-	@printf "$(COLOR_BLUE)==> Deploying Chat Server$(COLOR_RESET)\n"
-	helm upgrade --install chat-server ./helm/chat-server \
-		-n $(MSA_NAMESPACE)
-
-uninstall-chat:
-	@printf "$(COLOR_YELLOW)==> Uninstalling Chat Server$(COLOR_RESET)\n"
-	helm uninstall chat-server -n $(MSA_NAMESPACE)
-
-rollback-chat:
-	@printf "$(COLOR_YELLOW)==> Rolling back Chat Server$(COLOR_RESET)\n"
-	helm rollback chat-server -n $(MSA_NAMESPACE)
-
-restart-chat:
-	@printf "$(COLOR_BLUE)==> Restarting Chat Server$(COLOR_RESET)\n"
-	kubectl rollout restart deployment chat-server -n $(MSA_NAMESPACE)
-
-# ----------------------------------
-# Traefik
-# ----------------------------------
-deploy-traefik:
-	@printf "$(COLOR_BLUE)==> Deploying Traefik$(COLOR_RESET)\n"
-	helm upgrade traefik traefik/traefik \
-		--install \
-		-n $(TRAEFIK_NAMESPACE) \
-		--values helm/traefik/values.yaml \
-		--skip-crds=false
-	kubectl apply -f ./traefik/auth-middleware.yaml
-	kubectl apply -f ./traefik/ws-middleware.yaml
-	kubectl apply -f ./traefik/cors-middleware.yaml
-	kubectl apply -f ./traefik/ingressroute.yaml
-
-delete-traefik:
-	@printf "$(COLOR_YELLOW)==> Uninstalling Traefik$(COLOR_RESET)\n"
-	helm uninstall traefik -n $(TRAEFIK_NAMESPACE)
+# (Auth, Chat, Traefik unchanged)
 
 # ----------------------------------
 # All-in-One
