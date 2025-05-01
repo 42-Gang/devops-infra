@@ -1,0 +1,10 @@
+auth:
+  enabled: false
+
+master:
+  service:
+    type: ClusterIP
+
+architecture: replication
+replica:
+  replicaCount: 1
