@@ -104,9 +104,7 @@ uninstall-kafka:
 
 deploy-user: apply-secrets
 	helm upgrade --install user-server ./helm/user-server \
-		-n $(MSA_NAMESPACE) \
-		--set image.repository=$(REGISTRY)/$(USER_SERVER_IMAGE_NAME) \
-		--set image.tag=$(IMAGE_TAG)
+		-n $(MSA_NAMESPACE)
 
 uninstall-user:
 	helm uninstall user-server -n $(MSA_NAMESPACE)
@@ -116,9 +114,7 @@ rollback-user:
 
 deploy-auth: apply-secrets
 	helm upgrade --install auth-server ./helm/auth-server \
-		-n $(MSA_NAMESPACE) \
-		--set image.repository=$(REGISTRY)/$(AUTH_SERVER_IMAGE_NAME) \
-		--set image.tag=$(IMAGE_TAG)
+		-n $(MSA_NAMESPACE)
 
 uninstall-auth:
 	helm uninstall auth-server -n $(MSA_NAMESPACE)
@@ -128,10 +124,7 @@ rollback-auth:
 
 deploy-chat: apply-secrets
 	helm upgrade --install chat-server ./helm/chat-server \
-		-n $(MSA_NAMESPACE) \
-		--set image.repository=$(REGISTRY)/$(CHAT_SERVER_IMAGE_NAME) \
-		--set image.tag=$(IMAGE_TAG)
-
+		-n $(MSA_NAMESPACE)
 uninstall-chat:
 	helm uninstall chat-server -n $(MSA_NAMESPACE)
 
