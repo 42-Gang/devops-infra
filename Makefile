@@ -186,22 +186,73 @@ uninstall-kafka:
 # ----------------------------------
 deploy-user: apply-secrets
 	@printf "$(COLOR_BLUE)==> Deploying User Server$(COLOR_RESET)\n"
-	helm upgrade --install user-server ./helm/user-server \
+	helm upgrade --install $(USER_SERVER_IMAGE) ./helm/user-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-user:
 	@printf "$(COLOR_YELLOW)==> Uninstalling User Server$(COLOR_RESET)\n"
-	helm uninstall user-server -n $(MSA_NAMESPACE)
+	helm uninstall $(USER_SERVER_IMAGE) -n $(MSA_NAMESPACE)
 
 rollback-user:
 	@printf "$(COLOR_YELLOW)==> Rolling back User Server$(COLOR_RESET)\n"
-	helm rollback user-server -n $(MSA_NAMESPACE)
+	helm rollback $(USER_SERVER_IMAGE) -n $(MSA_NAMESPACE)
 
 restart-user:
 	@printf "$(COLOR_BLUE)==> Restarting User Server$(COLOR_RESET)\n"
-	kubectl rollout restart deployment user-server -n $(MSA_NAMESPACE)
+	kubectl rollout restart deployment $(USER_SERVER_IMAGE) -n $(MSA_NAMESPACE)
 
-# (Auth, Chat, Traefik unchanged)
+deploy-auth: apply-secrets
+	@printf "$(COLOR_BLUE)==> Deploying Auth Server$(COLOR_RESET)\n"
+	helm upgrade --install $(AUTH_SERVER_IMAGE) ./helm/auth-server \
+		-n $(MSA_NAMESPACE)
+
+uninstall-auth:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Auth Server$(COLOR_RESET)\n"
+	helm uninstall $(AUTH_SERVER_IMAGE) -n $(MSA_NAMESPACE)
+
+rollback-auth:
+	@printf "$(COLOR_YELLOW)==> Rolling back Auth Server$(COLOR_RESET)\n"
+	helm rollback $(AUTH_SERVER_IMAGE) -n $(MSA_NAMESPACE)
+
+restart-auth:
+	@printf "$(COLOR_BLUE)==> Restarting Auth Server$(COLOR_RESET)\n"
+	kubectl rollout restart deployment $(AUTH_SERVER_IMAGE) -n $(MSA_NAMESPACE)
+
+deploy-chat: apply-secrets
+	@printf "$(COLOR_BLUE)==> Deploying Chat Server$(COLOR_RESET)\n"
+	helm upgrade --install chat-server ./helm/chat-server \
+		-n $(MSA_NAMESPACE)
+
+uninstall-chat:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Chat Server$(COLOR_RESET)\n"
+	helm uninstall chat-server -n $(MSA_NAMESPACE)
+
+rollback-chat:
+	@printf "$(COLOR_YELLOW)==> Rolling back Chat Server$(COLOR_RESET)\n"
+	helm rollback chat-server -n $(MSA_NAMESPACE)
+
+restart-chat:
+	@printf "$(COLOR_BLUE)==> Restarting Chat Server$(COLOR_RESET)\n"
+	kubectl rollout restart deployment chat-server -n $(MSA_NAMESPACE)
+
+# ----------------------------------
+# Traefik
+# ----------------------------------
+deploy-traefik:
+	@printf "$(COLOR_BLUE)==> Deploying Traefik$(COLOR_RESET)\n"
+	helm upgrade traefik traefik/traefik \
+		--install \
+		-n $(TRAEFIK_NAMESPACE) \
+		--values helm/traefik/values.yaml \
+		--skip-crds=false
+	kubectl apply -f ./traefik/auth-middleware.yaml
+	kubectl apply -f ./traefik/ws-middleware.yaml
+	kubectl apply -f ./traefik/cors-middleware.yaml
+	kubectl apply -f ./traefik/ingressroute.yaml
+
+delete-traefik:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Traefik$(COLOR_RESET)\n"
+	helm uninstall traefik -n $(TRAEFIK_NAMESPACE)
 
 # ----------------------------------
 # All-in-One
@@ -213,17 +264,17 @@ deploy-all: deploy-user deploy-auth deploy-chat
 
 reset:
 	@printf "$(COLOR_YELLOW)==> Resetting environment$(COLOR_RESET)\n"
-	helm uninstall mariadb-user   -n $(MSA_NAMESPACE) || true
-	helm uninstall mariadb-auth   -n $(MSA_NAMESPACE) || true
-	helm uninstall mariadb-chat   -n $(MSA_NAMESPACE) || true
-	helm uninstall redis-user     -n $(MSA_NAMESPACE) || true
-	helm uninstall redis-auth     -n $(MSA_NAMESPACE) || true
-	helm uninstall redis-chat     -n $(MSA_NAMESPACE) || true
-	helm uninstall kafka          -n $(MSA_NAMESPACE) || true
-	helm uninstall traefik        -n $(TRAEFIK_NAMESPACE) || true
-	helm uninstall user-server    -n $(MSA_NAMESPACE) || true
-	helm uninstall auth-server    -n $(MSA_NAMESPACE) || true
-	helm uninstall chat-server    -n $(MSA_NAMESPACE) || true
+	helm uninstall mariadb-user     -n $(MSA_NAMESPACE) || true
+	helm uninstall mariadb-auth     -n $(MSA_NAMESPACE) || true
+	helm uninstall mariadb-chat     -n $(MSA_NAMESPACE) || true
+	helm uninstall redis-user       -n $(MSA_NAMESPACE) || true
+	helm uninstall redis-auth       -n $(MSA_NAMESPACE) || true
+	helm uninstall redis-chat       -n $(MSA_NAMESPACE) || true
+	helm uninstall kafka            -n $(MSA_NAMESPACE) || true
+	helm uninstall traefik          -n $(TRAEFIK_NAMESPACE) || true
+	helm uninstall $(USER_SERVER_IMAGE) -n $(MSA_NAMESPACE) || true
+	helm uninstall $(AUTH_SERVER_IMAGE) -n $(MSA_NAMESPACE) || true
+	helm uninstall chat-server      -n $(MSA_NAMESPACE) || true
 	kubectl delete all,cm,secret,pvc -n $(MSA_NAMESPACE) || true
 	kubectl delete all,cm,secret,pvc          || true
 
