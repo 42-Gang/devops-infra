@@ -49,15 +49,15 @@ install-mariadb: apply-secrets
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-auth/values.yaml
 
-	helm upgrade mariadb-chat $(CHART_REPO)/mariadb \
-		--install \
-		-n $(MSA_NAMESPACE) \
-		-f helm/mariadb-chat/values.yaml
+	#helm upgrade mariadb-chat $(CHART_REPO)/mariadb \
+#		--install \
+#		-n $(MSA_NAMESPACE) \
+#		-f helm/mariadb-chat/values.yaml
 
 uninstall-mariadb:
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE)
 	helm uninstall mariadb-auth -n $(MSA_NAMESPACE)
-	helm uninstall mariadb-chat -n $(MSA_NAMESPACE)
+	#helm uninstall mariadb-chat -n $(MSA_NAMESPACE)
 
 # ----------------------------------
 # Redis
@@ -112,6 +112,11 @@ uninstall-user:
 rollback-user:
 	helm rollback user-server -n $(MSA_NAMESPACE)
 
+restart-user:
+	kubectl rollout restart deployment user-server -n $(MSA_NAMESPACE)
+
+# ----------------------------------
+
 deploy-auth: apply-secrets
 	helm upgrade --install auth-server ./helm/auth-server \
 		-n $(MSA_NAMESPACE)
@@ -122,14 +127,23 @@ uninstall-auth:
 rollback-auth:
 	helm rollback auth-server -n $(MSA_NAMESPACE)
 
+restart-auth:
+	kubectl rollout restart deployment auth-server -n $(MSA_NAMESPACE)
+
+# ----------------------------------
+
 deploy-chat: apply-secrets
 	helm upgrade --install chat-server ./helm/chat-server \
 		-n $(MSA_NAMESPACE)
+
 uninstall-chat:
 	helm uninstall chat-server -n $(MSA_NAMESPACE)
 
 rollback-chat:
 	helm rollback chat-server -n $(MSA_NAMESPACE)
+
+restart-chat:
+	kubectl rollout restart deployment chat-server -n $(MSA_NAMESPACE)
 
 # ----------------------------------
 # Traefik
@@ -165,7 +179,7 @@ apply-secrets:
 
 install: create-namespace apply-secrets install-mariadb install-redis install-kafka
 
-deploy-all: deploy-user deploy-auth deploy-chat
+deploy-all: deploy-user deploy-auth
 
 reset:
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE) || true
