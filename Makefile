@@ -1,82 +1,140 @@
 # ----------------------------------
 # Global Config
 # ----------------------------------
-MSA_NAMESPACE := msa
-TRAEFIK_NAMESPACE := traefik
+MSA_NAMESPACE        := msa
+TRAEFIK_NAMESPACE    := traefik
 
-REGISTRY := kungbi
-USER_SERVER_IMAGE_NAME := user-server
-AUTH_SERVER_IMAGE_NAME := auth-server
-IMAGE_TAG := latest
-FULL_IMAGE := $(REGISTRY)/$(IMAGE_NAME):$(IMAGE_TAG)
-CHART_REPO := bitnami
-CHART_URL := https://charts.bitnami.com/bitnami
+REGISTRY             := kungbi
+USER_SERVER_IMAGE    := user-server
+AUTH_SERVER_IMAGE    := auth-server
+IMAGE_TAG            := latest
+FULL_IMAGE           := $(REGISTRY)/$(IMAGE_NAME):$(IMAGE_TAG)
+
+CHART_REPO           := bitnami
+CHART_URL            := https://charts.bitnami.com/bitnami
+
+# ----------------------------------
+# Color Config
+# ----------------------------------
+COLOR_BLUE   := \033[1;34m
+COLOR_GREEN  := \033[1;32m
+COLOR_YELLOW := \033[1;33m
+COLOR_RESET  := \033[0m
+
+# ----------------------------------
+# Phony Targets
+# ----------------------------------
+.PHONY: \
+  add-helm-repo \
+  create-namespace delete-namespace \
+  install-mariadb-user install-mariadb-auth install-mariadb-chat install-mariadb \
+  uninstall-mariadb-user uninstall-mariadb-auth uninstall-mariadb-chat uninstall-mariadb \
+  install-redis uninstall-redis \
+  install-kafka upgrade-kafka uninstall-kafka \
+  deploy-user uninstall-user rollback-user restart-user \
+  deploy-auth uninstall-auth rollback-auth restart-auth \
+  deploy-chat uninstall-chat rollback-chat restart-chat \
+  deploy-traefik delete-traefik \
+  apply-secrets apply-local-path \
+  install deploy-all reset all
 
 # ----------------------------------
 # Helm Repos
 # ----------------------------------
-
 add-helm-repo:
+	@printf "$(COLOR_BLUE)==> Adding Helm repositories$(COLOR_RESET)\n"
 	helm repo add $(CHART_REPO) $(CHART_URL)
 	helm repo add traefik https://traefik.github.io/charts
 	helm repo update
 
-
 # ----------------------------------
 # Namespace
 # ----------------------------------
-
 create-namespace:
+	@printf "$(COLOR_BLUE)==> Creating namespaces$(COLOR_RESET)\n"
 	kubectl create namespace $(MSA_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 	kubectl create namespace $(TRAEFIK_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 
 delete-namespace:
+	@printf "$(COLOR_YELLOW)==> Deleting namespaces$(COLOR_RESET)\n"
 	kubectl delete namespace $(MSA_NAMESPACE)
 	kubectl delete namespace $(TRAEFIK_NAMESPACE)
 
 # ----------------------------------
-# MariaDB
+# Secrets & StorageClass
 # ----------------------------------
+apply-secrets:
+	@printf "$(COLOR_BLUE)==> Applying secrets$(COLOR_RESET)\n"
+	kubectl apply -f ./secrets/server-secret.yaml -n $(MSA_NAMESPACE)
+	kubectl apply -f ./secrets/mariadb-secret.yaml -n $(MSA_NAMESPACE)
 
-install-mariadb: apply-secrets
+apply-local-path:
+	@printf "$(COLOR_BLUE)==> Installing local-path provisioner$(COLOR_RESET)\n"
+	kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
+
+# ----------------------------------
+# MariaDB (개별/통합)
+# ----------------------------------
+install-mariadb-user: apply-secrets
+	@printf "$(COLOR_GREEN)==> Installing MariaDB User$(COLOR_RESET)\n"
 	helm upgrade mariadb-user $(CHART_REPO)/mariadb \
 		--install \
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-user/values.yaml
 
+install-mariadb-auth: apply-secrets
+	@printf "$(COLOR_GREEN)==> Installing MariaDB Auth$(COLOR_RESET)\n"
 	helm upgrade mariadb-auth $(CHART_REPO)/mariadb \
 		--install \
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-auth/values.yaml
 
+install-mariadb-chat: apply-secrets
+	@printf "$(COLOR_GREEN)==> Installing MariaDB Chat$(COLOR_RESET)\n"
 	helm upgrade mariadb-chat $(CHART_REPO)/mariadb \
 		--install \
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-chat/values.yaml
 
-uninstall-mariadb:
+install-mariadb: \
+	install-mariadb-user \
+	install-mariadb-auth \
+	install-mariadb-chat
+
+uninstall-mariadb-user:
+	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB User$(COLOR_RESET)\n"
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE)
+
+uninstall-mariadb-auth:
+	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB Auth$(COLOR_RESET)\n"
 	helm uninstall mariadb-auth -n $(MSA_NAMESPACE)
-	#helm uninstall mariadb-chat -n $(MSA_NAMESPACE)
+
+uninstall-mariadb-chat:
+	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB Chat$(COLOR_RESET)\n"
+	helm uninstall mariadb-chat -n $(MSA_NAMESPACE)
+
+uninstall-mariadb: \
+	uninstall-mariadb-user \
+	uninstall-mariadb-auth \
+	uninstall-mariadb-chat
 
 # ----------------------------------
 # Redis
 # ----------------------------------
-
 install-redis:
+	@printf "$(COLOR_GREEN)==> Installing Redis components$(COLOR_RESET)\n"
 	helm install redis-user $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
 		-f helm/redis-user/values.yaml
-
 	helm install redis-auth $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
 		-f helm/redis-auth/values.yaml
-
 	helm install redis-chat $(CHART_REPO)/redis \
-    		-n $(MSA_NAMESPACE) \
-    		-f helm/redis-chat/values.yaml
+		-n $(MSA_NAMESPACE) \
+		-f helm/redis-chat/values.yaml
 
 uninstall-redis:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Redis components$(COLOR_RESET)\n"
 	helm uninstall redis-user -n $(MSA_NAMESPACE)
 	helm uninstall redis-auth -n $(MSA_NAMESPACE)
 	helm uninstall redis-chat -n $(MSA_NAMESPACE)
@@ -84,77 +142,85 @@ uninstall-redis:
 # ----------------------------------
 # Kafka (KRaft 모드)
 # ----------------------------------
-
 install-kafka:
+	@printf "$(COLOR_GREEN)==> Installing Kafka (KRaft mode)$(COLOR_RESET)\n"
 	helm install kafka $(CHART_REPO)/kafka \
 		-n $(MSA_NAMESPACE) \
 		-f helm/kafka/values.yaml
 
 upgrade-kafka:
+	@printf "$(COLOR_YELLOW)==> Upgrading Kafka$(COLOR_RESET)\n"
 	helm upgrade kafka $(CHART_REPO)/kafka \
 		-n $(MSA_NAMESPACE) \
 		-f helm/kafka/values.yaml
 
 uninstall-kafka:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Kafka$(COLOR_RESET)\n"
 	helm uninstall kafka -n $(MSA_NAMESPACE)
 
 # ----------------------------------
-# Deploy User Server (Helm Chart 사용 가정)
+# Application Deployments
 # ----------------------------------
-
 deploy-user: apply-secrets
+	@printf "$(COLOR_BLUE)==> Deploying User Server$(COLOR_RESET)\n"
 	helm upgrade --install user-server ./helm/user-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-user:
+	@printf "$(COLOR_YELLOW)==> Uninstalling User Server$(COLOR_RESET)\n"
 	helm uninstall user-server -n $(MSA_NAMESPACE)
 
 rollback-user:
+	@printf "$(COLOR_YELLOW)==> Rolling back User Server$(COLOR_RESET)\n"
 	helm rollback user-server -n $(MSA_NAMESPACE)
 
 restart-user:
+	@printf "$(COLOR_BLUE)==> Restarting User Server$(COLOR_RESET)\n"
 	kubectl rollout restart deployment user-server -n $(MSA_NAMESPACE)
 
-# ----------------------------------
-
 deploy-auth: apply-secrets
+	@printf "$(COLOR_BLUE)==> Deploying Auth Server$(COLOR_RESET)\n"
 	helm upgrade --install auth-server ./helm/auth-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-auth:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Auth Server$(COLOR_RESET)\n"
 	helm uninstall auth-server -n $(MSA_NAMESPACE)
 
 rollback-auth:
+	@printf "$(COLOR_YELLOW)==> Rolling back Auth Server$(COLOR_RESET)\n"
 	helm rollback auth-server -n $(MSA_NAMESPACE)
 
 restart-auth:
+	@printf "$(COLOR_BLUE)==> Restarting Auth Server$(COLOR_RESET)\n"
 	kubectl rollout restart deployment auth-server -n $(MSA_NAMESPACE)
 
-# ----------------------------------
-
 deploy-chat: apply-secrets
+	@printf "$(COLOR_BLUE)==> Deploying Chat Server$(COLOR_RESET)\n"
 	helm upgrade --install chat-server ./helm/chat-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-chat:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Chat Server$(COLOR_RESET)\n"
 	helm uninstall chat-server -n $(MSA_NAMESPACE)
 
 rollback-chat:
+	@printf "$(COLOR_YELLOW)==> Rolling back Chat Server$(COLOR_RESET)\n"
 	helm rollback chat-server -n $(MSA_NAMESPACE)
 
 restart-chat:
+	@printf "$(COLOR_BLUE)==> Restarting Chat Server$(COLOR_RESET)\n"
 	kubectl rollout restart deployment chat-server -n $(MSA_NAMESPACE)
 
 # ----------------------------------
 # Traefik
 # ----------------------------------
-
 deploy-traefik:
+	@printf "$(COLOR_BLUE)==> Deploying Traefik$(COLOR_RESET)\n"
 	helm upgrade traefik traefik/traefik \
 		--install \
 		-n $(TRAEFIK_NAMESPACE) \
 		--values helm/traefik/values.yaml \
-		-f helm/traefik/values.yaml \
 		--skip-crds=false
 	kubectl apply -f ./traefik/auth-middleware.yaml
 	kubectl apply -f ./traefik/ws-middleware.yaml
@@ -162,42 +228,31 @@ deploy-traefik:
 	kubectl apply -f ./traefik/ingressroute.yaml
 
 delete-traefik:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Traefik$(COLOR_RESET)\n"
 	helm uninstall traefik -n $(TRAEFIK_NAMESPACE)
-
-# ----------------------------------
-# Secrets
-# ----------------------------------
-
-apply-secrets:
-	kubectl apply -f ./secrets/server-secret.yaml -n $(MSA_NAMESPACE)
-	kubectl apply -f ./secrets/mariadb-secret.yaml -n $(MSA_NAMESPACE)
-
-
-apply-local-path:
-	kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.24/deploy/local-path-storage.yaml
 
 # ----------------------------------
 # All-in-One
 # ----------------------------------
-
-install: apply-local-path create-namespace apply-secrets install-mariadb install-redis install-kafka
+install: apply-local-path create-namespace apply-secrets \
+	install-mariadb install-redis install-kafka
 
 deploy-all: deploy-user deploy-auth deploy-chat
 
 reset:
-	helm uninstall mariadb-user -n $(MSA_NAMESPACE) || true
-	helm uninstall mariadb-auth -n $(MSA_NAMESPACE) || true
-	helm uninstall mariadb-chat -n $(MSA_NAMESPACE) || true
-
-	helm uninstall redis-user -n $(MSA_NAMESPACE) || true
-	helm uninstall redis-auth -n $(MSA_NAMESPACE) || true
-	helm uninstall redis-chat -n $(MSA_NAMESPACE) || true
-
-	helm uninstall kafka -n $(MSA_NAMESPACE) || true
-
-	helm uninstall user-server -n $(MSA_NAMESPACE) || true
-	helm uninstall auth-server -n $(MSA_NAMESPACE) || true
-	helm uninstall chat-server -n $(MSA_NAMESPACE) || true
-
+	@printf "$(COLOR_YELLOW)==> Resetting environment$(COLOR_RESET)\n"
+	helm uninstall mariadb-user   -n $(MSA_NAMESPACE) || true
+	helm uninstall mariadb-auth   -n $(MSA_NAMESPACE) || true
+	helm uninstall mariadb-chat   -n $(MSA_NAMESPACE) || true
+	helm uninstall redis-user     -n $(MSA_NAMESPACE) || true
+	helm uninstall redis-auth     -n $(MSA_NAMESPACE) || true
+	helm uninstall redis-chat     -n $(MSA_NAMESPACE) || true
+	helm uninstall kafka          -n $(MSA_NAMESPACE) || true
+	helm uninstall traefik        -n $(TRAEFIK_NAMESPACE) || true
+	helm uninstall user-server    -n $(MSA_NAMESPACE) || true
+	helm uninstall auth-server    -n $(MSA_NAMESPACE) || true
+	helm uninstall chat-server    -n $(MSA_NAMESPACE) || true
 	kubectl delete all,cm,secret,pvc -n $(MSA_NAMESPACE) || true
-	kubectl delete all,cm,secret,pvc || true
+	kubectl delete all,cm,secret,pvc          || true
+
+all: install
