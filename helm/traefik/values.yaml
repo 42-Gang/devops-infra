@@ -1,3 +1,5 @@
+# values.yaml
+
 additionalArguments:
   - "--api.dashboard=true"
   - "--api.insecure=true"
@@ -29,3 +31,11 @@ log:
 
 accessLog:
   enabled: true
+
+resources:
+  requests:
+    cpu:    "100m"   # 최소 보장 0.1 CPU
+    memory: "128Mi"  # 최소 보장 128MiB
+  limits:
+    cpu:    "500m"   # 최대 0.5 CPU
+    memory: "512Mi"  # 최대 512MiB
