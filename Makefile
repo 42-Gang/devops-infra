@@ -49,10 +49,10 @@ install-mariadb: apply-secrets
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-auth/values.yaml
 
-	#helm upgrade mariadb-chat $(CHART_REPO)/mariadb \
-#		--install \
-#		-n $(MSA_NAMESPACE) \
-#		-f helm/mariadb-chat/values.yaml
+	helm upgrade mariadb-chat $(CHART_REPO)/mariadb \
+		--install \
+		-n $(MSA_NAMESPACE) \
+		-f helm/mariadb-chat/values.yaml
 
 uninstall-mariadb:
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE)
@@ -179,7 +179,7 @@ apply-secrets:
 
 install: create-namespace apply-secrets install-mariadb install-redis install-kafka
 
-deploy-all: deploy-user deploy-auth
+deploy-all: deploy-user deploy-auth deploy-chat
 
 reset:
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE) || true
