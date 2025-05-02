@@ -12,10 +12,6 @@ master:
     limits:
       cpu: "500m"
       memory: "512Mi"
-  persistence:
-    enabled: true
-    storageClass: local-path
-    size: 1Gi
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
@@ -34,11 +30,12 @@ replica:
       cpu: "500m"
       memory: "512Mi"
 
-  persistence:
-    enabled: true
-    storageClass: local-path
-    size: 1Gi
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
       effect: "NoSchedule"
+
+persistence:
+  enabled: true
+  storageClass: local-path
+  size: 1Gi
