@@ -38,3 +38,9 @@ zookeeper:
 extraEnvVars:
   - name: ALLOW_PLAINTEXT_LISTENER
     value: "yes"
+
+
+persistence:
+  enabled: true
+  storageClass: local-path
+  size: 1Gi

@@ -25,3 +25,8 @@ replica:
     limits:
       cpu: "500m"
       memory: "512Mi"
+
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 1Gi
