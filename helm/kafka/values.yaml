@@ -2,6 +2,7 @@ clusterId: "kraft-cluster-id-01"
 
 controller:
   replicaCount: 1
+  controllerOnly: true
   quorumBootstrapServers: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093"
   persistence:
     enabled: true
@@ -40,8 +41,6 @@ broker:
 extraEnvVars:
   - name: ALLOW_PLAINTEXT_LISTENER
     value: "yes"
-  - name: KAFKA_HEAP_OPTS
-    value: "-Xmx512m -Xms512m"
 
 listeners:
   client:
