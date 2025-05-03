@@ -17,6 +17,11 @@ master:
       operator: "Exists"
       effect: "NoSchedule"
 
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 1Gi
+
 architecture: replication
 
 replica:
@@ -35,7 +40,7 @@ replica:
       operator: "Exists"
       effect: "NoSchedule"
 
-persistence:
-  enabled: true
-  storageClass: local-path
-  size: 1Gi
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 1Gi
