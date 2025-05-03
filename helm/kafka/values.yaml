@@ -5,6 +5,7 @@ kraft:
   clusterId: "kraft-cluster-id-01"
 
 controller:
+  replicaCount: 2
   quorum:
     voters: "0@kafka-0.kafka-headless.msa.svc.cluster.local:9093"
   persistence:
@@ -15,6 +16,13 @@ controller:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
       effect: "NoSchedule"
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
 
 broker:
   persistence:
