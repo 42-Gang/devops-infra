@@ -8,11 +8,15 @@ additionalArguments:
 
 service:
   type: NodePort
+  nodePorts:
+    web: 30080   # 호스트(노드)의 30080 열림
+
 ports:
   web:
-    port: 80
-    nodePort: 30080   # 노드의 30080 포트를 개방
-    protocol: TCP
+    port:        8080      # 컨테이너가 8080에 바인드
+    expose:
+      exposedPort: 80      # (Helm 차트에 키가 exposePort인지 nodePort인지 확인)
+    protocol:    TCP
 
 
 providers:
