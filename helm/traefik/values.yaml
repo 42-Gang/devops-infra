@@ -5,6 +5,8 @@ additionalArguments:
   - "--api.insecure=true"
   - "--providers.kubernetescrd"
   - "--accesslog=true"
+  - "--entryPoints.web.address=:80"
+
 
 service:
   type: NodePort
