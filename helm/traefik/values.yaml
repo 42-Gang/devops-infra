@@ -6,6 +6,8 @@ additionalArguments:
   - "--providers.kubernetescrd"
   - "--accesslog=true"
 
+hostNetwork: true
+
 ports:
   web:
     expose:
@@ -13,7 +15,7 @@ ports:
     protocol: TCP
 
 service:
-  type: LoadBalancer
+  type: ClusterIP
 
 providers:
   kubernetesCRD:

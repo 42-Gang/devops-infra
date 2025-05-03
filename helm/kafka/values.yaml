@@ -1,21 +1,12 @@
-replicaCount: 1
-
-kraft:
-  enabled: true
-  clusterId: "kraft-cluster-id-01"
+clusterId: "kraft-cluster-id-01"
 
 controller:
-  replicaCount: 2
-  quorum:
-    voters: "0@kafka-0.kafka-headless.msa.svc.cluster.local:9093"
+  replicaCount: 3
+  quorumBootstrapServers: ""
   persistence:
     enabled: true
     storageClass: local-path
     size: 1Gi
-  tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
   resources:
     requests:
       cpu: "300m"
@@ -29,10 +20,6 @@ broker:
     enabled: true
     storageClass: local-path
     size: 1Gi
-  tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
 
 listeners:
   client:
@@ -54,6 +41,10 @@ advertisedListeners:
     name: INTERNAL
     port: 9094
     address: kafka-broker-headless.msa.svc.cluster.local
+  controller:
+    name: CONTROLLER
+    address: kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local
+    port: 9093
 
 interBrokerListenerName: internal
 controllerListenerNames: controller
