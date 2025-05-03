@@ -40,10 +40,6 @@ resources:
     cpu:    "500m"   # 최대 0.5 CPU
     memory: "512Mi"  # 최대 512MiB
 
-persistence:
-  enabled: true
-  storageClass: local-path
-  size: 1Gi
 tolerations:
   - key: "node-role.kubernetes.io/control-plane"
     operator: "Exists"
