@@ -13,10 +13,9 @@ service:
 
 ports:
   web:
-    port:        8080      # 컨테이너가 8080에 바인드
-    expose:
-      exposedPort: 80      # (Helm 차트에 키가 exposePort인지 nodePort인지 확인)
-    protocol:    TCP
+    port: 80
+    nodePort: 30080
+    protocol: TCP
 
 
 providers:
