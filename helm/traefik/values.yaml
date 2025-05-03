@@ -8,12 +8,13 @@ additionalArguments:
 
 service:
   type: NodePort
-  nodePorts:
-    web: 30080
 
 ports:
   web:
-    port: 8000
+    nodePort: 30080
+    protocol: TCP
+  websecure:
+    nodePort: 30443
     protocol: TCP
 
 
