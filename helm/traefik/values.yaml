@@ -6,16 +6,16 @@ additionalArguments:
   - "--providers.kubernetescrd"
   - "--accesslog=true"
 
-hostNetwork: true
-
 ports:
   web:
-    expose:
-      exposedPort: 80
+    port: 80
     protocol: TCP
 
 service:
   type: LoadBalancer
+  externalIPs:
+    - 10.0.0.38
+
 
 providers:
   kubernetesCRD:
@@ -36,10 +36,10 @@ accessLog:
 
 resources:
   requests:
-    cpu:    "100m"   # 최소 보장 0.1 CPU
+    cpu: "100m"   # 최소 보장 0.1 CPU
     memory: "128Mi"  # 최소 보장 128MiB
   limits:
-    cpu:    "500m"   # 최대 0.5 CPU
+    cpu: "500m"   # 최대 0.5 CPU
     memory: "512Mi"  # 최대 512MiB
 
 tolerations:
