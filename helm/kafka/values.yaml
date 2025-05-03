@@ -2,45 +2,15 @@ clusterId: "kraft-cluster-id-01"
 
 controller:
   replicaCount: 1
-  controllerOnly: true
-  quorumBootstrapServers: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093"
+  quorumVoters: "0@kafka-0.kafka-headless.msa.svc.cluster.local:9093"
   persistence:
     enabled: true
     storageClass: local-path
     size: 1Gi
-  resources:
-    requests:
-      cpu: "300m"
-      memory: "1Gi"
-    limits:
-      cpu: "500m"
-      memory: "2Gi"
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
-
-broker:
-  replicaCount: 1
-  persistence:
-    enabled: true
-    storageClass: local-path
-    size: 1Gi
-  resources:
-    requests:
-      cpu: "300m"
-      memory: "1Gi"
-    limits:
-      cpu: "500m"
-      memory: "2Gi"
-  tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
-
-extraEnvVars:
-  - name: ALLOW_PLAINTEXT_LISTENER
-    value: "yes"
+      operator: Exists
+      effect: NoSchedule
 
 listeners:
   client:
@@ -55,3 +25,20 @@ listeners:
     protocol: PLAINTEXT
     containerPort: 9093
     name: CONTROLLER
+
+advertisedListeners:
+  client:
+    name: CLIENT
+    port: 9092
+    address: kafka-0.kafka-headless.msa.svc.cluster.local
+  internal:
+    name: INTERNAL
+    port: 9094
+    address: kafka-0.kafka-headless.msa.svc.cluster.local
+
+interBrokerListenerName: INTERNAL
+controllerListenerNames: CONTROLLER
+
+extraEnvVars:
+  - name: ALLOW_PLAINTEXT_LISTENER
+    value: "yes"
