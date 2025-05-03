@@ -11,9 +11,11 @@ service:
 
 ports:
   web:
+    port: 30080
     nodePort: 30080
     protocol: TCP
   websecure:
+    port: 30080
     nodePort: 30443
     protocol: TCP
 
