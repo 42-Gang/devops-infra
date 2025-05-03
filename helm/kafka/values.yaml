@@ -11,13 +11,13 @@ controller:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
       effect: "NoSchedule"
-  resources:
-    requests:
-      cpu: "300m"
-      memory: "256Mi"
-    limits:
-      cpu: "500m"
-      memory: "512Mi"
+#  resources:
+#    requests:
+#      cpu: "300m"
+#      memory: "256Mi"
+#    limits:
+#      cpu: "500m"
+#      memory: "512Mi"
 
 broker:
   replicaCount: 1
@@ -31,13 +31,13 @@ broker:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
       effect: "NoSchedule"
-  resources:
-    requests:
-      cpu: "300m"
-      memory: "256Mi"
-    limits:
-      cpu: "500m"
-      memory: "512Mi"
+#  resources:
+#    requests:
+#      cpu: "300m"
+#      memory: "256Mi"
+#    limits:
+#      cpu: "500m"
+#      memory: "512Mi"
 
 listeners:
   client:
