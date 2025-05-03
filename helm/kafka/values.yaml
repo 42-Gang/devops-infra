@@ -1,51 +1,72 @@
-replicaCount: 1
-
 kraft:
   enabled: true
   clusterId: "kraft-cluster-id-01"
 
 controller:
-  quorum:
-    voters: "0@kafka-0.kafka-headless.msa.svc.cluster.local:9093"
+  replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 1Gi
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+broker:
+  replicaCount: 1
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 1Gi
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
 
 listeners:
   client:
     protocol: PLAINTEXT
-    port: 9092
-  internal:
-    protocol: PLAINTEXT
-    port: 9094
+    containerPort: 9092
+    name: CLIENT
   controller:
     protocol: PLAINTEXT
-    port: 9093
-
-advertisedListeners:
-  client:
-    name: CLIENT
-    port: 9092
-    address: kafka-0.kafka-headless.msa.svc.cluster.local
-  internal:
+    containerPort: 9093
+    name: CONTROLLER
+  interbroker:
+    protocol: PLAINTEXT
+    containerPort: 9094
     name: INTERNAL
-    port: 9094
-    address: kafka-0.kafka-headless.msa.svc.cluster.local
 
-interBrokerListenerName: internal
-controllerListenerNames: controller
-
-zookeeper:
-  enabled: false
+sasl:
+  enabledMechanisms: PLAIN
+  interBrokerMechanism: PLAIN
+  controllerMechanism: PLAIN
+  interbroker:
+    user: inter
+    password: interpass
+  controller:
+    user: ctrl
+    password: ctrlpass
+  client:
+    users:
+      - user1
+    passwords: password1
 
 extraEnvVars:
   - name: ALLOW_PLAINTEXT_LISTENER
     value: "yes"
-
-
-persistence:
-  enabled: true
-  storageClass: local-path
-  size: 1Gi
-
-tolerations:
-  - key: "node-role.kubernetes.io/control-plane"
-    operator: "Exists"
-    effect: "NoSchedule"
