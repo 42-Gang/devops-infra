@@ -15,7 +15,7 @@ ports:
     protocol: TCP
 
 service:
-  type: ClusterIP
+  type: LoadBalancer
 
 providers:
   kubernetesCRD:
