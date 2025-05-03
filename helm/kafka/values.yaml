@@ -26,7 +26,7 @@ broker:
     storageClass: local-path
     size: 1Gi
   controllerConnection:
-    quorumVoters: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093"
+    quorumVoters: "0@kafka-0.kafka-headless.msa.svc.cluster.local:9093"
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
