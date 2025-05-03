@@ -11,12 +11,20 @@ controller:
     enabled: true
     storageClass: local-path
     size: 1Gi
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
 
 broker:
   persistence:
     enabled: true
     storageClass: local-path
     size: 1Gi
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
 
 listeners:
   client:
