@@ -2,7 +2,7 @@ clusterId: "kraft-cluster-id-01"
 
 controller:
   replicaCount: 1
-  quorumVoters: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093"
+  quorumBootstrapServers: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093"
   persistence:
     enabled: true
     storageClass: local-path
@@ -21,8 +21,6 @@ controller:
 
 broker:
   replicaCount: 1
-  controllerConnection:
-    quorumVoters: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093"
   persistence:
     enabled: true
     storageClass: local-path
