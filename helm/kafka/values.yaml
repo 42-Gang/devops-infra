@@ -7,30 +7,26 @@ controller:
     enabled: true
     storageClass: local-path
     size: 1Gi
+  resources:
+    requests:
+      cpu: "300m"
+      memory: "512Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
       effect: "NoSchedule"
-  resources:
-    requests:
-      cpu: "300m"
-      memory: "1Gi"
-    limits:
-      cpu: "500m"
-      memory: "1Gi"
 
 broker:
   replicaCount: 1
+  controllerConnection:
+    quorumVoters: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093"
   persistence:
     enabled: true
     storageClass: local-path
     size: 1Gi
-  controllerConnection:
-    quorumVoters: "0@kafka-0.kafka-headless.msa.svc.cluster.local:9093"
-  tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
   resources:
     requests:
       cpu: "300m"
@@ -38,6 +34,16 @@ broker:
     limits:
       cpu: "500m"
       memory: "1Gi"
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+
+extraEnvVars:
+  - name: ALLOW_PLAINTEXT_LISTENER
+    value: "yes"
+  - name: KAFKA_HEAP_OPTS
+    value: "-Xmx512m -Xms512m" # 또는 broker 메모리를 1Gi 이상으로 할 것
 
 listeners:
   client:
@@ -52,7 +58,3 @@ listeners:
     protocol: PLAINTEXT
     containerPort: 9093
     name: CONTROLLER
-
-extraEnvVars:
-  - name: ALLOW_PLAINTEXT_LISTENER
-    value: "yes"
