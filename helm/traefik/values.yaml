@@ -1,3 +1,9 @@
+podSecurityContext:
+  capabilities:
+    add:
+      - NET_BIND_SERVICE
+
+
 additionalArguments:
   - "--entryPoints.web.address=:80"   # ← Traefik이 직접 80포트를 열게 함
   - "--entryPoints.websecure.address=:443"
