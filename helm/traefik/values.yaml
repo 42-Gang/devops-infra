@@ -7,15 +7,14 @@ additionalArguments:
   - "--accesslog=true"
 
 service:
-  type: ClusterIP
-hostNetwork: true     # Pod 스펙에 추가
+  type: NodePort
+  nodePorts:
+    web: 30080
 
 ports:
   web:
     port: 8000
     protocol: TCP
-  websecure:
-    port: 4443
 
 
 providers:
