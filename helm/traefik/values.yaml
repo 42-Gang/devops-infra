@@ -6,14 +6,14 @@ additionalArguments:
   - "--providers.kubernetescrd"
   - "--accesslog=true"
 
+service:
+  type: NodePort
 ports:
   web:
-    expose:
-      exposedPort: 80
+    port: 80
+    nodePort: 30080   # 노드의 30080 포트를 개방
     protocol: TCP
 
-service:
-  type: LoadBalancer
 
 providers:
   kubernetesCRD:
