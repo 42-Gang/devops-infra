@@ -1,16 +1,7 @@
-architecture: replication
-
 auth:
   enabled: false
 
-persistence:
-  enabled: true
-  storageClass: local-path
-  size: 1Gi
-
 master:
-  service:
-    type: ClusterIP
   resources:
     requests:
       cpu: "300m"
