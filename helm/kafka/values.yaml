@@ -23,11 +23,11 @@ advertisedListeners:
   client:
     name: CLIENT
     port: 9092
-    address: kafka-0.kafka-headless.msa.svc.cluster.local
+    address: kafka-broker-headless.msa.svc.cluster.local
   internal:
     name: INTERNAL
     port: 9094
-    address: kafka-0.kafka-headless.msa.svc.cluster.local
+    address: kafka-broker-headless.msa.svc.cluster.local
 
 interBrokerListenerName: internal
 controllerListenerNames: controller
