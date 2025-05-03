@@ -7,6 +7,16 @@ kraft:
 controller:
   quorum:
     voters: "0@kafka-0.kafka-headless.msa.svc.cluster.local:9093"
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 1Gi
+
+broker:
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 1Gi
 
 listeners:
   client:
