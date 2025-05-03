@@ -10,10 +10,10 @@ controller:
   resources:
     requests:
       cpu: "300m"
-      memory: "512Mi"
+      memory: "1Gi"
     limits:
       cpu: "500m"
-      memory: "512Mi"
+      memory: "2Gi"
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
@@ -33,7 +33,7 @@ broker:
       memory: "1Gi"
     limits:
       cpu: "500m"
-      memory: "1Gi"
+      memory: "2Gi"
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
@@ -43,7 +43,7 @@ extraEnvVars:
   - name: ALLOW_PLAINTEXT_LISTENER
     value: "yes"
   - name: KAFKA_HEAP_OPTS
-    value: "-Xmx512m -Xms512m" # 또는 broker 메모리를 1Gi 이상으로 할 것
+    value: "-Xmx512m -Xms512m"
 
 listeners:
   client:
