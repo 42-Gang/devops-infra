@@ -4,3 +4,4 @@ metadata:
   name: kafka-env
 data:
   KAFKA_CFG_NODE_ID: "$(HOSTNAME##*-)"
+  KAFKA_CFG_ADVERTISED_LISTENERS: "PLAINTEXT://kafka-controller-$(HOSTNAME##*-).kafka-controller-headless.msa.svc.cluster.local:9092"

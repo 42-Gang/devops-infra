@@ -6,23 +6,6 @@ image:
 zookeeper:
   enabled: false
 
-controller:
-  persistence:
-    enabled: true
-    size: 3Gi
-    storageClass: local-path
-  persistentVolumeClaimRetentionPolicy:
-    enabled: true
-    whenDeleted: Retain
-    whenScaled: Retain
-  resources:
-    requests:
-      cpu: 100m
-      memory: 512Mi
-    limits:
-      cpu: 300m
-      memory: 768Mi
-
 broker:
   persistence:
     enabled: true
@@ -40,21 +23,40 @@ broker:
       cpu: 300m
       memory: 768Mi
 
-kafka:
-  configurationOverrides:
-    "process.roles": "broker,controller"
-    "controller.listener.names": "CONTROLLER"
-    "listener.security.protocol.map": "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT"
-    "listeners": "PLAINTEXT://:9092,CONTROLLER://:9093"
-    "inter.broker.listener.name": "PLAINTEXT"
-    "log.dirs": "/bitnami/kafka/data"
-    "controller.quorum.voters": |
-      0@kafka-0.kafka-headless.default.svc.cluster.local:9093,
-      1@kafka-1.kafka-headless.default.svc.cluster.local:9093,
-      2@kafka-2.kafka-headless.default.svc.cluster.local:9093
+controller:
+  replicaCount: 3
+  persistence:
+    enabled: true
+    size: 3Gi
+    storageClass: local-path
+  persistentVolumeClaimRetentionPolicy:
+    enabled: true
+    whenDeleted: Retain
+    whenScaled: Retain
+  resources:
+    requests:
+      cpu: 100m
+      memory: 512Mi
+    limits:
+      cpu: 300m
+      memory: 768Mi
 
   extraEnvVarsCM: kafka-env
+  configurationOverrides:
+    listeners: PLAINTEXT://:9092,CONTROLLER://:9093
+    listener.security.protocol.map: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    controller.listener.names: CONTROLLER
+    inter.broker.listener.name: PLAINTEXT
+    log.dirs: /bitnami/kafka/data
+    process.roles: broker,controller
+    controller.quorum.voters: |
+      0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093,
+      1@kafka-controller-1.kafka-controller-headless.msa.svc.cluster.local:9093,
+      2@kafka-controller-2.kafka-controller-headless.msa.svc.cluster.local:9093
+
 
 headless:
   annotations:
     service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+
+
