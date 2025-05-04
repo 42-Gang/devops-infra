@@ -6,6 +6,30 @@ image:
 zookeeper:
   enabled: false
 
+auth:
+  enabled: false  # 💥 반드시 false
+
+sasl: {}  # 💥 아예 비워야 템플릿에서 SASL 생성 안 함
+
+listeners:
+  client:
+    name: CLIENT
+    containerPort: 9092
+    protocol: PLAINTEXT
+    sslClientAuth: ""
+
+  interbroker:
+    name: INTERNAL
+    containerPort: 9094
+    protocol: PLAINTEXT
+    sslClientAuth: ""
+
+  controller:
+    name: CONTROLLER
+    containerPort: 9093
+    protocol: PLAINTEXT
+    sslClientAuth: ""
+
 broker:
   persistence:
     enabled: true
@@ -41,22 +65,19 @@ controller:
       cpu: 300m
       memory: 768Mi
 
-  extraEnvVarsCM: kafka-env
   configurationOverrides:
-    listeners: PLAINTEXT://:9092,CONTROLLER://:9093
-    listener.security.protocol.map: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    process.roles: broker,controller
+    advertised.listeners: PLAINTEXT://kafka-controller-$(HOSTNAME##*-).kafka-controller-headless.msa.svc.cluster.local:9092
     controller.listener.names: CONTROLLER
+    listener.security.protocol.map: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+    security.inter.broker.protocol: PLAINTEXT
     inter.broker.listener.name: PLAINTEXT
     log.dirs: /bitnami/kafka/data
-    process.roles: broker,controller
     controller.quorum.voters: |
       0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093,
       1@kafka-controller-1.kafka-controller-headless.msa.svc.cluster.local:9093,
       2@kafka-controller-2.kafka-controller-headless.msa.svc.cluster.local:9093
 
-
 headless:
   annotations:
     service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
-
-
