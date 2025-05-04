@@ -48,8 +48,8 @@ accessLog:
 
 resources:
   requests:
-    cpu:    "100m"   # 최소 보장 0.1 CPU
-    memory: "128Mi"  # 최소 보장 128MiB
+    cpu: "100m"
+    memory: "128Mi"
   limits:
-    cpu:    "500m"   # 최대 0.5 CPU
-    memory: "512Mi"  # 최대 512MiB
+    cpu: "300m"
+    memory: "512Mi"
