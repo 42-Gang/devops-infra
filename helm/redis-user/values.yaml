@@ -7,11 +7,6 @@ master:
     size: 1Gi
     sizeLimit: 1Gi
     storageClass: local-path
-
-  tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
   resources:
     requests:
       cpu: "100m"
@@ -27,11 +22,6 @@ replica:
     size: 1Gi
     sizeLimit: 1Gi
     storageClass: local-path
-
-  tolerations:
-    - key: "node-role.kubernetes.io/control-plane"
-      operator: "Exists"
-      effect: "NoSchedule"
   resources:
     requests:
       cpu: "100m"
