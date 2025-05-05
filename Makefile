@@ -2,6 +2,7 @@
 # Global Config
 # ----------------------------------
 MSA_NAMESPACE        := msa
+TRAEFIK_NAMESPACE    := traefik
 
 REGISTRY             := kungbi
 USER_SERVER_IMAGE    := user-server
@@ -239,7 +240,7 @@ deploy-traefik:
 	@printf "$(COLOR_BLUE)==> Deploying Traefik$(COLOR_RESET)\n"
 	helm upgrade traefik traefik/traefik \
 		--install \
-		-n $(MSA_NAMESPACE) \
+		-n $(TRAEFIK_NAMESPACE) \
 		--values helm/traefik/values.yaml \
 		--skip-crds=false
 	kubectl apply -f ./traefik/auth-middleware.yaml
@@ -249,7 +250,7 @@ deploy-traefik:
 
 delete-traefik:
 	@printf "$(COLOR_YELLOW)==> Uninstalling Traefik$(COLOR_RESET)\n"
-	helm uninstall traefik -n $(MSA_NAMESPACE)
+	helm uninstall traefik -n $(TRAEFIK_NAMESPACE)
 
 # ----------------------------------
 # All-in-One
@@ -268,7 +269,7 @@ reset:
 	helm uninstall redis-auth       -n $(MSA_NAMESPACE) || true
 	helm uninstall redis-chat       -n $(MSA_NAMESPACE) || true
 	helm uninstall kafka            -n $(MSA_NAMESPACE) || true
-	helm uninstall traefik          -n $(MSA_NAMESPACE) || true
+	helm uninstall traefik          -n $(TRAEFIK_NAMESPACE) || true
 	helm uninstall $(USER_SERVER_IMAGE) -n $(MSA_NAMESPACE) || true
 	helm uninstall $(AUTH_SERVER_IMAGE) -n $(MSA_NAMESPACE) || true
 	helm uninstall chat-server      -n $(MSA_NAMESPACE) || true
