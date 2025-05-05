@@ -30,6 +30,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
                   key: AUTH_DB_URL
+            - name: FASTIFY_LOG_LEVEL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: FASTIFY_LOG_LEVEL
             - name: REDIS_HOST
               valueFrom:
                 secretKeyRef:
