@@ -242,7 +242,7 @@ deploy-traefik:
 	@printf "$(COLOR_BLUE)==> Deploying Traefik$(COLOR_RESET)\n"
 	helm upgrade traefik traefik/traefik \
 		--install \
-		-n $(TRAEFIK_NAMESPACE) \
+		-n $(MSA_NAMESPACE) \
 		--values helm/traefik/values.yaml \
 		--skip-crds=false
 	kubectl apply -f ./traefik/auth-middleware.yaml
