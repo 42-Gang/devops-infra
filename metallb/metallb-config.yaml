@@ -15,3 +15,5 @@ metadata:
 spec:
   ipAddressPools:
     - my-ip-pool
+  interfaces:
+    - enp0s6
