@@ -1,6 +1,6 @@
 additionalArguments:
-  - "--entryPoints.web.address=:30080"   # ← Traefik이 직접 80포트를 열게 함
-  - "--entryPoints.websecure.address=:30443"
+  - "--entryPoints.web.address=:80"   # ← Traefik이 직접 80포트를 열게 함
+  - "--entryPoints.websecure.address=:443"
   - "--api.dashboard=true"
   - "--api.insecure=true"
   - "--providers.kubernetescrd"
@@ -13,10 +13,10 @@ hostNetwork: true   # ← Pod가 Node의 네트워크 직접 사용 (그래야 8
 
 ports:
   web:
-    port: 30080
+    port: 80
     protocol: TCP
   websecure:
-    port: 30443
+    port: 443
     protocol: TCP
 
 podSecurityContext:
