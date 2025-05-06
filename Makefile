@@ -252,6 +252,14 @@ delete-traefik:
 	@printf "$(COLOR_YELLOW)==> Uninstalling Traefik$(COLOR_RESET)\n"
 	helm uninstall traefik -n $(TRAEFIK_NAMESPACE)
 
+deploy-metallb:
+	kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
+	kubectl apply -f metallb/metallb-config.yaml
+
+delete-metallb:
+	kubectl delete -f metallb/metallb-config.yaml
+	kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
+
 # ----------------------------------
 # All-in-One
 # ----------------------------------
