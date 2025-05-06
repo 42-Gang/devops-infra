@@ -1,22 +1,18 @@
 additionalArguments:
-  - "--entryPoints.web.address=:30080"   # ← Traefik이 직접 80포트를 열게 함
-  - "--entryPoints.websecure.address=:30443"
   - "--api.dashboard=true"
   - "--api.insecure=true"
   - "--providers.kubernetescrd"
   - "--accesslog=true"
 
 service:
-  type: ClusterIP   # NodePort 또는 LoadBalancer가 필요 없음
-
-hostNetwork: true   # ← Pod가 Node의 네트워크 직접 사용 (그래야 80 포트 바인딩 가능)
+  type: LoadBalancer
 
 ports:
   web:
-    port: 30080
+    port: 80
     protocol: TCP
   websecure:
-    port: 30443
+    port: 443
     protocol: TCP
 
 podSecurityContext:
