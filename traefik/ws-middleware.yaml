@@ -5,5 +5,5 @@ metadata:
   namespace: msa
 spec:
   replacePathRegex:
-    regex: ^/ws/user/(.*)
+    regex: ^/ws/(?:user|chat)/(.*)
     replacement: /socket.io/${1}
