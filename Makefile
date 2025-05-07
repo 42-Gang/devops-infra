@@ -7,6 +7,7 @@ TRAEFIK_NAMESPACE    := traefik
 REGISTRY             := kungbi
 USER_SERVER_IMAGE    := user-server
 AUTH_SERVER_IMAGE    := auth-server
+CHAT_SERVER_IMAGE    := chat-server
 IMAGE_TAG            := latest
 FULL_IMAGE           := $(REGISTRY)/$(IMAGE_NAME):$(IMAGE_TAG)
 
@@ -218,7 +219,7 @@ restart-auth:
 
 deploy-chat: apply-secrets
 	@printf "$(COLOR_BLUE)==> Deploying Chat Server$(COLOR_RESET)\n"
-	helm upgrade --install chat-server ./helm/chat-server \
+	helm upgrade --install $(CHAT_SERVER_IMAGE) ./helm/chat-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-chat:
