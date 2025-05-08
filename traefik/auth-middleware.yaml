@@ -5,7 +5,7 @@ metadata:
   namespace: msa
 spec:
   forwardAuth:
-    address: http://localhost/api/v1/auth/validate-token
+    address: http://auth-server.msa.svc.cluster.local:3000/api/v1/auth/validate-token
     trustForwardHeader: false
     authResponseHeaders:
       - X-User-Id
