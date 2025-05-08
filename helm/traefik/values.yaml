@@ -7,16 +7,8 @@ additionalArguments:
   - "--accesslog=true"
 
 service:
-  type: NodePort   # NodePort 또는 LoadBalancer가 필요 없음
-  ports:
-    web:
-      nodePort: 30080
-    websecure:
-      nodePort: 30433
-
-
-#hostNetwork: true   # ← Pod가 Node의 네트워크 직접 사용 (그래야 80 포트 바인딩 가능)
-hostNetwork: false   # ← Pod가 Node의 네트워크 직접 사용 (그래야 80 포트 바인딩 가능)
+  type: LoadBalancer
+hostNetwork: false
 
 ports:
   web:
