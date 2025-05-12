@@ -1,0 +1,22 @@
+replicaCount: 1
+
+image:
+  repository: kungbi/file-server
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 3000
+
+env:
+  SECRET_NAME: server-secret
+
+resources: {}
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  storageClass: local-path
+  size: 6Gi
+

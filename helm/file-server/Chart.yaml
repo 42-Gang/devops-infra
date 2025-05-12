@@ -1,0 +1,4 @@
+apiVersion: v1
+name: file-server
+description: A Helm chart for Chat Server
+version: 0.1.0

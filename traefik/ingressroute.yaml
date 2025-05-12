@@ -47,6 +47,16 @@ spec:
           port: 3000
           namespace: msa
 
+    - match: PathPrefix(`/api/v1/file`)
+      kind: Rule
+      middlewares:
+        - name: cors
+        - name: auth-middleware
+      services:
+        - name: file-server
+          port: 3000
+          namespace: msa
+
     - match: PathPrefix(`/ws/user`)
       kind: Rule
       middlewares:
