@@ -9,10 +9,10 @@ master:
     storageClass: local-path
   resources:
     requests:
-      cpu: "100m"
+      cpu: "50m"
       memory: "128Mi"
     limits:
-      cpu: "200m"
+      cpu: "100m"
       memory: "256Mi"
 
 replica:
@@ -24,8 +24,8 @@ replica:
     storageClass: local-path
   resources:
     requests:
-      cpu: "100m"
+      cpu: "50m"
       memory: "128Mi"
     limits:
-      cpu: "200m"
+      cpu: "100m"
       memory: "256Mi"
