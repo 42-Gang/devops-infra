@@ -234,6 +234,23 @@ restart-chat:
 	@printf "$(COLOR_BLUE)==> Restarting Chat Server$(COLOR_RESET)\n"
 	kubectl rollout restart deployment chat-server -n $(MSA_NAMESPACE)
 
+deploy-file: apply-secrets
+	@printf "$(COLOR_BLUE)==> Deploying File Server$(COLOR_RESET)\n"
+	helm upgrade --install file-server ./helm/file-server \
+		-n $(MSA_NAMESPACE)
+
+uninstall-file:
+	@printf "$(COLOR_YELLOW)==> Uninstalling File Server$(COLOR_RESET)\n"
+	helm uninstall file-server -n $(MSA_NAMESPACE)
+
+rollback-file:
+	@printf "$(COLOR_YELLOW)==> Rolling back File Server$(COLOR_RESET)\n"
+	helm rollback file-server -n $(MSA_NAMESPACE)
+
+restart-file:
+	@printf "$(COLOR_BLUE)==> Restarting File Server$(COLOR_RESET)\n"
+	kubectl rollout restart deployment file-server -n $(MSA_NAMESPACE)
+
 # ----------------------------------
 # Traefik
 # ----------------------------------
