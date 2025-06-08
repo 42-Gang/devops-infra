@@ -107,7 +107,8 @@ install-mariadb: \
 	install-mariadb-user \
 	install-mariadb-auth \
 	install-mariadb-chat \
-	install-mariadb-main-game
+
+
 
 uninstall-mariadb-user:
 	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB User$(COLOR_RESET)\n"

@@ -1,0 +1,21 @@
+auth:
+  existingSecret: mariadb-secret
+  username: user
+  database: database
+
+primary:
+  service:
+    type: ClusterIP
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "200m"
+      memory: "512Mi"
+
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 1Gi
