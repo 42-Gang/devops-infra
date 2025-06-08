@@ -84,3 +84,12 @@ spec:
         - name: chat-server
           port: 3000
           namespace: msa
+
+    - match: PathPrefix(`/ws/main-game`)
+      kind: Rule
+      middlewares:
+        - name: ws-middleware
+      services:
+        - name: main-game-server
+          port: 3000
+          namespace: msa
