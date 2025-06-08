@@ -96,10 +96,18 @@ install-mariadb-chat: apply-secrets
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb-chat/values.yaml
 
+install-mariadb-main-game: apply-secrets
+	@printf "$(COLOR_GREEN)==> Installing MariaDB Main Game$(COLOR_RESET)\n"
+	helm upgrade mariadb-main-game $(CHART_REPO)/mariadb \
+		--install \
+		-n $(MSA_NAMESPACE) \
+		-f helm/mariadb-main-game/values.yaml
+
 install-mariadb: \
 	install-mariadb-user \
 	install-mariadb-auth \
-	install-mariadb-chat
+	install-mariadb-chat \
+	install-mariadb-main-game
 
 uninstall-mariadb-user:
 	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB User$(COLOR_RESET)\n"
@@ -113,10 +121,15 @@ uninstall-mariadb-chat:
 	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB Chat$(COLOR_RESET)\n"
 	helm uninstall mariadb-chat -n $(MSA_NAMESPACE)
 
+uninstall-mariadb-main-game:
+	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB Main Game$(COLOR_RESET)\n"
+	helm uninstall mariadb-main-game -n $(MSA_NAMESPACE)
+
 uninstall-mariadb: \
 	uninstall-mariadb-user \
 	uninstall-mariadb-auth \
-	uninstall-mariadb-chat
+	uninstall-mariadb-chat \
+	uninstall-mariadb-main-game
 
 # ----------------------------------
 # Redis (개별/통합)
