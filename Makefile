@@ -251,6 +251,23 @@ restart-file:
 	@printf "$(COLOR_BLUE)==> Restarting File Server$(COLOR_RESET)\n"
 	kubectl rollout restart deployment file-server -n $(MSA_NAMESPACE)
 
+deploy-main-game: apply-secrets
+	@printf "$(COLOR_BLUE)==> Deploying File Server$(COLOR_RESET)\n"
+	helm upgrade --install main-game-server ./helm/main-game-server \
+		-n $(MSA_NAMESPACE)
+
+uninstall-main-game:
+	@printf "$(COLOR_YELLOW)==> Uninstalling File Server$(COLOR_RESET)\n"
+	helm uninstall main-game-server -n $(MSA_NAMESPACE)
+
+rollback-main-game:
+	@printf "$(COLOR_YELLOW)==> Rolling back File Server$(COLOR_RESET)\n"
+	helm rollback main-game-server -n $(MSA_NAMESPACE)
+
+restart-main-game:
+	@printf "$(COLOR_BLUE)==> Restarting File Server$(COLOR_RESET)\n"
+	kubectl rollout restart deployment main-game-server -n $(MSA_NAMESPACE)
+
 # ----------------------------------
 # Traefik
 # ----------------------------------
@@ -284,7 +301,7 @@ delete-metallb:
 install: apply-local-path create-namespace apply-secrets \
 	install-mariadb install-redis install-kafka
 
-deploy-all: deploy-user deploy-auth deploy-chat
+deploy-all: deploy-user deploy-auth deploy-chat deploy-file deploy-main-game deploy-traefik
 
 reset:
 	@printf "$(COLOR_YELLOW)==> Resetting environment$(COLOR_RESET)\n"
