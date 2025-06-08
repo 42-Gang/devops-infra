@@ -70,6 +70,11 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
                   key: USER_SERVER_URL
+            - name: AUTH_SERVER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: AUTH_SERVER_URL
             - name: GMAIL_USER
               valueFrom:
                 secretKeyRef:
