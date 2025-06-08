@@ -139,10 +139,17 @@ install-redis-chat:
 		-n $(MSA_NAMESPACE) \
 		-f helm/redis-chat/values.yaml
 
+install-redis-main-game:
+	@printf "$(COLOR_GREEN)==> Installing Redis Main Game$(COLOR_RESET)\n"
+	helm install redis-main-game $(CHART_REPO)/redis \
+		-n $(MSA_NAMESPACE) \
+		-f helm/redis-main-game/values.yaml
+
 install-redis: \
 	install-redis-user \
 	install-redis-auth \
-	install-redis-chat
+	install-redis-chat \
+	install-redis-main-game
 
 uninstall-redis-user:
 	@printf "$(COLOR_YELLOW)==> Uninstalling Redis User$(COLOR_RESET)\n"
@@ -156,10 +163,15 @@ uninstall-redis-chat:
 	@printf "$(COLOR_YELLOW)==> Uninstalling Redis Chat$(COLOR_RESET)\n"
 	helm uninstall redis-chat -n $(MSA_NAMESPACE)
 
+uninstall-redis-main-game:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Redis Main Game$(COLOR_RESET)\n"
+	helm uninstall redis-main-game -n $(MSA_NAMESPACE)
+
 uninstall-redis: \
 	uninstall-redis-user \
 	uninstall-redis-auth \
-	uninstall-redis-chat
+	uninstall-redis-chat \
+	uninstall-redis-main-game
 
 # ----------------------------------
 # Kafka (KRaft 모드)
