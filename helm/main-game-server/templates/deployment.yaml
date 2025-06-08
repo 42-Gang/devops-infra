@@ -29,7 +29,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
-                  key: AUTH_DB_URL
+                  key: MAIN_GAME_DB_URL
             - name: FASTIFY_LOG_LEVEL
               valueFrom:
                 secretKeyRef:
@@ -39,27 +39,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
-                  key: AUTH_REDIS_HOST
+                  key: MAIN_GAME_REDIS_HOST
             - name: REDIS_PORT
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
-                  key: AUTH_REDIS_PORT
-            - name: JWT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.env.SECRET_NAME }}
-                  key: JWT_SECRET
-            - name: JWT_EXPIRES_IN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.env.SECRET_NAME }}
-                  key: JWT_EXPIRES_IN
-            - name: JWT_REFRESH_EXPIRES_IN
-              valueFrom:
-                secretKeyRef:
-                  name: {{ .Values.env.SECRET_NAME }}
-                  key: JWT_REFRESH_EXPIRES_IN
+                  key: MAIN_GAME_REDIS_PORT
             - name: KAFKA_BROKER
               valueFrom:
                 secretKeyRef:
