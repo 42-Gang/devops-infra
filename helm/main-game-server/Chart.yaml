@@ -1,0 +1,4 @@
+apiVersion: v1
+name: main-game-server
+description: A Helm chart for Main Game Server
+version: 0.1.0
