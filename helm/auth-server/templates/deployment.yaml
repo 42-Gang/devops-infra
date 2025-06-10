@@ -92,3 +92,13 @@ spec:
                   key: GOOGLE_REFRESH_TOKEN
             - name: FASTIFY_PORT
               value: "{{ .Values.service.port }}"
+            - name: GOOGLE_REDIRECT_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: GOOGLE_REDIRECT_URI
+            - name: FRONT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: FRONT_URL
