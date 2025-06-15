@@ -18,7 +18,7 @@ spec:
       - X-Requested-With
       - Accept
     accessControlAllowOriginList:
-      - "http://localhost:5173"
+      - "http://localhost:4243"
     accessControlMaxAge: 100
     addVaryHeader: true
     accessControlAllowCredentials: true
