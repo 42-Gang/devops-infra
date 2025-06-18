@@ -9,7 +9,7 @@ zookeeper:
 auth:
   enabled: false  # 💥 반드시 false
 
-sasl: {}  # 💥 아예 비워야 템플릿에서 SASL 생성 안 함
+sasl: { }  # 💥 아예 비워야 템플릿에서 SASL 생성 안 함
 
 listeners:
   client:
@@ -42,10 +42,10 @@ broker:
   resources:
     requests:
       cpu: 50m
-      memory: 512Mi
+      memory: 768Mi
     limits:
       cpu: 100m
-      memory: 768Mi
+      memory: 1024Mi
 
 controller:
   replicaCount: 3
@@ -60,10 +60,10 @@ controller:
   resources:
     requests:
       cpu: 50m
-      memory: 512Mi
+      memory: 768Mi
     limits:
       cpu: 100m
-      memory: 768Mi
+      memory: 1024Mi
 
   configurationOverrides:
     process.roles: broker,controller
