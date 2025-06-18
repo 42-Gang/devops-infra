@@ -42,10 +42,10 @@ broker:
   resources:
     requests:
       cpu: 50m
-      memory: 768Mi
+      memory: 2Gi
     limits:
       cpu: 100m
-      memory: 1024Mi
+      memory: 2Gi
 
 controller:
   replicaCount: 3
@@ -60,10 +60,10 @@ controller:
   resources:
     requests:
       cpu: 50m
-      memory: 768Mi
+      memory: 2Gi
     limits:
       cpu: 100m
-      memory: 1024Mi
+      memory: 2Gi
 
   configurationOverrides:
     process.roles: broker,controller
