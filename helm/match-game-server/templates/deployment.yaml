@@ -29,12 +29,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
-                  key: MATCH_GAME_REDIS_HOST
+                  key: MAIN_GAME_REDIS_HOST
             - name: REDIS_PORT
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
-                  key: MATCH_GAME_REDIS_PORT
+                  key: MAIN_GAME_REDIS_PORT
             - name: KAFKA_BROKER
               valueFrom:
                 secretKeyRef:

@@ -108,8 +108,6 @@ install-mariadb: \
 	install-mariadb-auth \
 	install-mariadb-chat \
 
-
-
 uninstall-mariadb-user:
 	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB User$(COLOR_RESET)\n"
 	helm uninstall mariadb-user -n $(MSA_NAMESPACE)
@@ -294,6 +292,23 @@ restart-main-game:
 	@printf "$(COLOR_BLUE)==> Restarting File Server$(COLOR_RESET)\n"
 	kubectl rollout restart deployment main-game-server -n $(MSA_NAMESPACE)
 
+deploy-match-game: apply-secrets
+	@printf "$(COLOR_BLUE)==> Deploying Match Game Server$(COLOR_RESET)\n"
+	helm upgrade --install match-game-server ./helm/match-game-server \
+		-n $(MSA_NAMESPACE)
+
+uninstall-match-game:
+	@printf "$(COLOR_YELLOW)==> Uninstalling Match Game Server$(COLOR_RESET)\n"
+	helm uninstall match-game-server -n $(MSA_NAMESPACE)
+
+rollback-match-game:
+	@printf "$(COLOR_YELLOW)==> Rolling back Match Game Server$(COLOR_RESET)\n"
+	helm rollback match-game-server -n $(MSA_NAMESPACE)
+
+restart-match-game:
+	@printf "$(COLOR_BLUE)==> Restarting Match Game Server$(COLOR_RESET)\n"
+	kubectl rollout restart deployment match-game-server -n $(MSA_NAMESPACE)
+
 # ----------------------------------
 # Traefik
 # ----------------------------------
@@ -327,7 +342,7 @@ delete-metallb:
 install: apply-local-path create-namespace apply-secrets \
 	install-mariadb install-redis install-kafka
 
-deploy-all: deploy-user deploy-auth deploy-chat deploy-file deploy-main-game deploy-traefik
+deploy-all: deploy-user deploy-auth deploy-chat deploy-file deploy-main-game deploy-match-game deploy-traefik
 
 reset:
 	@printf "$(COLOR_YELLOW)==> Resetting environment$(COLOR_RESET)\n"
@@ -342,6 +357,9 @@ reset:
 	helm uninstall $(USER_SERVER_IMAGE) -n $(MSA_NAMESPACE) || true
 	helm uninstall $(AUTH_SERVER_IMAGE) -n $(MSA_NAMESPACE) || true
 	helm uninstall chat-server      -n $(MSA_NAMESPACE) || true
+	helm uninstall file-server      -n $(MSA_NAMESPACE) || true
+	helm uninstall main-game-server -n $(MSA_NAMESPACE) || true
+	helm uninstall match-game-server -n $(MSA_NAMESPACE) || true
 	kubectl delete all,cm,secret,pvc -n $(MSA_NAMESPACE) || true
 	kubectl delete all,cm,secret,pvc          || true
 
