@@ -1,0 +1,15 @@
+replicaCount: 1
+
+image:
+  repository: kungbi/match-game-server
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 3000
+
+env:
+  SECRET_NAME: server-secret
+
+resources: { }
