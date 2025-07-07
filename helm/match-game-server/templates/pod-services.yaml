@@ -1,6 +1,7 @@
 {{- $name := .Chart.Name -}}
 {{- $port := .Values.service.port -}}
-{{- range $i := until .Values.replicaCount }}
+{{- $replicas := int .Values.replicaCount -}}
+{{- range $i := until $replicas }}
 apiVersion: v1
 kind: Service
 metadata:
