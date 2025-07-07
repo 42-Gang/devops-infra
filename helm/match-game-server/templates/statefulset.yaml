@@ -5,7 +5,7 @@ metadata:
   labels:
     app: {{ .Chart.Name }}
 spec:
-  serviceName: {{ .Chart.Name }}-headless          # headless 서비스 이름
+  serviceName: {{ .Chart.Name }}-headless
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
