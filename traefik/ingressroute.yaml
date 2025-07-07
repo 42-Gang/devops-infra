@@ -103,11 +103,11 @@ spec:
           port: 3000
           namespace: msa
 
-    - match: PathPrefix(`/ws/match-game`)
+    - match: PathPrefix(`/ws/match-game`) Headers('X-Match-Game-Server', 'match-game-server-0')
       kind: Rule
       middlewares:
         - name: ws-middleware
       services:
-        - name: main-game-server
+        - name: match-game-server-0
           port: 3000
           namespace: msa
