@@ -108,6 +108,6 @@ spec:
       middlewares:
         - name: ws-middleware
       services:
-        - name: match-game-server-0
+        - name: main-game-server
           port: 3000
           namespace: msa
