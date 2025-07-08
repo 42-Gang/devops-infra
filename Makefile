@@ -307,7 +307,7 @@ rollback-match-game:
 
 restart-match-game:
 	@printf "$(COLOR_BLUE)==> Restarting Match Game Server$(COLOR_RESET)\n"
-	kubectl rollout restart deployment match-game-server -n $(MSA_NAMESPACE)
+	kubectl rollout restart statefulset match-game-server -n (MSA_NAMESPACE)
 
 # ----------------------------------
 # Traefik
