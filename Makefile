@@ -3,6 +3,7 @@
 # ----------------------------------
 MSA_NAMESPACE        := msa
 TRAEFIK_NAMESPACE    := traefik
+MONITOR_NAMESPACE    := monitor
 
 REGISTRY             := kungbi
 USER_SERVER_IMAGE    := user-server
@@ -47,6 +48,11 @@ add-helm-repo:
 	@printf "$(COLOR_BLUE)==> Adding Helm repositories$(COLOR_RESET)\n"
 	helm repo add $(CHART_REPO) $(CHART_URL)
 	helm repo add traefik https://traefik.github.io/charts
+
+	helm repo add grafana https://grafana.github.io/helm-charts
+    helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
 	helm repo update
 
 # ----------------------------------
@@ -55,10 +61,12 @@ add-helm-repo:
 create-namespace:
 	@printf "$(COLOR_BLUE)==> Creating namespaces$(COLOR_RESET)\n"
 	kubectl create namespace $(MSA_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
+	kubectl create namespace $(MONITOR_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 
 delete-namespace:
 	@printf "$(COLOR_YELLOW)==> Deleting namespaces$(COLOR_RESET)\n"
 	kubectl delete namespace $(MSA_NAMESPACE)
+	kubectl delete namespace $(MONITOR_NAMESPACE)
 
 # ----------------------------------
 # Secrets & StorageClass
@@ -80,28 +88,28 @@ install-mariadb-user: apply-secrets
 	helm upgrade mariadb-user $(CHART_REPO)/mariadb \
 		--install \
 		-n $(MSA_NAMESPACE) \
-		-f helm/mariadb-user/values.yaml
+		-f helm/mariadb/mariadb-user/values.yaml
 
 install-mariadb-auth: apply-secrets
 	@printf "$(COLOR_GREEN)==> Installing MariaDB Auth$(COLOR_RESET)\n"
 	helm upgrade mariadb-auth $(CHART_REPO)/mariadb \
 		--install \
 		-n $(MSA_NAMESPACE) \
-		-f helm/mariadb-auth/values.yaml
+		-f helm/mariadb/mariadb-auth/values.yaml
 
 install-mariadb-chat: apply-secrets
 	@printf "$(COLOR_GREEN)==> Installing MariaDB Chat$(COLOR_RESET)\n"
 	helm upgrade mariadb-chat $(CHART_REPO)/mariadb \
 		--install \
 		-n $(MSA_NAMESPACE) \
-		-f helm/mariadb-chat/values.yaml
+		-f helm/mariadb/mariadb-chat/values.yaml
 
 install-mariadb-main-game: apply-secrets
 	@printf "$(COLOR_GREEN)==> Installing MariaDB Main Game$(COLOR_RESET)\n"
 	helm upgrade mariadb-main-game $(CHART_REPO)/mariadb \
 		--install \
 		-n $(MSA_NAMESPACE) \
-		-f helm/mariadb-main-game/values.yaml
+		-f helm/mariadb/mariadb-main-game/values.yaml
 
 install-mariadb: \
 	install-mariadb-user \
@@ -137,25 +145,25 @@ install-redis-user:
 	@printf "$(COLOR_GREEN)==> Installing Redis User$(COLOR_RESET)\n"
 	helm install redis-user $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
-		-f helm/redis-user/values.yaml
+		-f helm/redis/redis-user/values.yaml
 
 install-redis-auth:
 	@printf "$(COLOR_GREEN)==> Installing Redis Auth$(COLOR_RESET)\n"
 	helm install redis-auth $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
-		-f helm/redis-auth/values.yaml
+		-f helm/redis/redis-auth/values.yaml
 
 install-redis-chat:
 	@printf "$(COLOR_GREEN)==> Installing Redis Chat$(COLOR_RESET)\n"
 	helm install redis-chat $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
-		-f helm/redis-chat/values.yaml
+		-f helm/redis/redis-chat/values.yaml
 
 install-redis-main-game:
 	@printf "$(COLOR_GREEN)==> Installing Redis Main Game$(COLOR_RESET)\n"
 	helm install redis-main-game $(CHART_REPO)/redis \
 		-n $(MSA_NAMESPACE) \
-		-f helm/redis-main-game/values.yaml
+		-f helm/redis/redis-main-game/values.yaml
 
 install-redis: \
 	install-redis-user \
@@ -209,7 +217,7 @@ uninstall-kafka:
 # ----------------------------------
 deploy-user: apply-secrets
 	@printf "$(COLOR_BLUE)==> Deploying User Server$(COLOR_RESET)\n"
-	helm upgrade --install $(USER_SERVER_IMAGE) ./helm/user-server \
+	helm upgrade --install $(USER_SERVER_IMAGE) ./helm/services/user-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-user:
@@ -226,7 +234,7 @@ restart-user:
 
 deploy-auth: apply-secrets
 	@printf "$(COLOR_BLUE)==> Deploying Auth Server$(COLOR_RESET)\n"
-	helm upgrade --install $(AUTH_SERVER_IMAGE) ./helm/auth-server \
+	helm upgrade --install $(AUTH_SERVER_IMAGE) ./helm/services/auth-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-auth:
@@ -243,7 +251,7 @@ restart-auth:
 
 deploy-chat: apply-secrets
 	@printf "$(COLOR_BLUE)==> Deploying Chat Server$(COLOR_RESET)\n"
-	helm upgrade --install $(CHAT_SERVER_IMAGE) ./helm/chat-server \
+	helm upgrade --install $(CHAT_SERVER_IMAGE) ./helm/services/chat-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-chat:
@@ -260,7 +268,7 @@ restart-chat:
 
 deploy-file: apply-secrets
 	@printf "$(COLOR_BLUE)==> Deploying File Server$(COLOR_RESET)\n"
-	helm upgrade --install file-server ./helm/file-server \
+	helm upgrade --install file-server ./helm/services/file-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-file:
@@ -277,7 +285,7 @@ restart-file:
 
 deploy-main-game: apply-secrets
 	@printf "$(COLOR_BLUE)==> Deploying File Server$(COLOR_RESET)\n"
-	helm upgrade --install main-game-server ./helm/main-game-server \
+	helm upgrade --install main-game-server ./helm/services/main-game-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-main-game:
@@ -294,7 +302,7 @@ restart-main-game:
 
 deploy-match-game: apply-secrets
 	@printf "$(COLOR_BLUE)==> Deploying Match Game Server$(COLOR_RESET)\n"
-	helm upgrade --install match-game-server ./helm/match-game-server \
+	helm upgrade --install match-game-server ./helm/services/match-game-server \
 		-n $(MSA_NAMESPACE)
 
 uninstall-match-game:
@@ -335,6 +343,12 @@ deploy-metallb:
 delete-metallb:
 	kubectl delete -f metallb/metallb-config.yaml
 	kubectl delete -f https://raw.githubusercontent.com/metallb/metallb/v0.14.9/config/manifests/metallb-native.yaml
+
+
+# ----------------------------------
+# Monitoring (Grafana, Prometheus, Jaeger)
+# ----------------------------------
+
 
 # ----------------------------------
 # All-in-One
