@@ -1,0 +1,19 @@
+allInOne:
+  enabled: true
+collector:
+  otlp:
+    enabled: true
+ui:
+  enabled: true
+query:
+  enabled: true
+service:
+  name: jaeger
+serviceAccount:
+  create: true
+ingester:
+  enabled: false
+agent:
+  enabled: false
+ingress:
+  enabled: false

@@ -1,0 +1,14 @@
+service:
+  type: ClusterIP
+  port: 9090
+
+# 스크랩 타겟
+server:
+  global:
+    scrape_interval: 15s
+    evaluation_interval: 15s
+  additionalScrapeConfigs:
+    - job_name: 'auth-server'
+      metrics_path: /metrics
+      static_configs:
+        - targets: [ 'auth-server.monitor.svc.cluster.local:9464' ]

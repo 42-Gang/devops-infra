@@ -351,15 +351,80 @@ delete-metallb:
 # ----------------------------------
 # Monitoring (Grafana, Prometheus, Jaeger)
 # ----------------------------------
+deploy-loki:
+	helm upgrade --install loki grafana/loki \
+		--namespace monitor \
+		-f values-loki.yaml
 
+delete-loki:
+	helm uninstall loki -n monitor
+
+deploy-promtail:
+	helm upgrade --install promtail grafana/promtail \
+		--namespace monitor \
+		-f values-promtail.yaml
+
+delete-promtail:
+	helm uninstall promtail -n monitor
+
+deploy-grafana:
+	helm upgrade --install grafana grafana/grafana \
+		--namespace monitor \
+		-f values-grafana.yaml
+
+delete-grafana:
+	helm uninstall grafana -n monitor
+
+deploy-jaeger:
+	helm upgrade --install jaeger jaegertracing/jaeger \
+		--namespace monitor \
+		-f values-jaeger.yaml
+
+delete-jaeger:
+	helm uninstall jaeger -n monitor
+
+deploy-prometheus:
+	helm upgrade --install prometheus prometheus-community/prometheus \
+		--namespace monitor \
+		-f values-prometheus.yaml
+
+delete-prometheus:
+	helm uninstall prometheus -n monitor
+
+deploy-all-monitoring: \
+	deploy-loki \
+	deploy-promtail \
+	deploy-grafana \
+	deploy-jaeger \
+	deploy-prometheus
+
+delete-all-monitoring: \
+	delete-loki \
+	delete-promtail \
+	delete-grafana \
+	delete-jaeger \
+	delete-prometheus
 
 # ----------------------------------
 # All-in-One
 # ----------------------------------
-install: add-helm-repo apply-local-path create-namespace apply-secrets \
-	install-mariadb install-redis install-kafka
+install: \
+	add-helm-repo \
+	apply-local-path \
+	create-namespace \
+	apply-secrets \
+	install-mariadb \
+	install-redis \
+	install-kafka
 
-deploy-all: deploy-user deploy-auth deploy-chat deploy-file deploy-main-game deploy-match-game deploy-traefik
+deploy-all: \
+	deploy-user \
+	deploy-auth \
+	deploy-chat \
+	deploy-file \
+	deploy-main-game \
+	deploy-match-game \
+	deploy-traefik
 
 reset:
 	@printf "$(COLOR_YELLOW)==> Resetting environment$(COLOR_RESET)\n"

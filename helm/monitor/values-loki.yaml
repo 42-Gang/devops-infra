@@ -1,0 +1,7 @@
+persistence:
+  enabled: false
+service:
+  type: ClusterIP
+  port: 3100
+config:
+  auth_enabled: false
