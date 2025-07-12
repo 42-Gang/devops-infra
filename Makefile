@@ -50,9 +50,8 @@ add-helm-repo:
 	helm repo add traefik https://traefik.github.io/charts
 
 	helm repo add grafana https://grafana.github.io/helm-charts
-    helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
-    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-
+	helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	helm repo update
 
 # ----------------------------------
@@ -62,11 +61,13 @@ create-namespace:
 	@printf "$(COLOR_BLUE)==> Creating namespaces$(COLOR_RESET)\n"
 	kubectl create namespace $(MSA_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 	kubectl create namespace $(MONITOR_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
+	kubectl create namespace $(TRAEFIK_NAMESPACE) --dry-run=client -o yaml | kubectl apply -f -
 
 delete-namespace:
 	@printf "$(COLOR_YELLOW)==> Deleting namespaces$(COLOR_RESET)\n"
 	kubectl delete namespace $(MSA_NAMESPACE)
 	kubectl delete namespace $(MONITOR_NAMESPACE)
+	kubectl delete namespace $(TRAEFIK_NAMESPACE)
 
 # ----------------------------------
 # Secrets & StorageClass
@@ -111,10 +112,6 @@ install-mariadb-main-game: apply-secrets
 		-n $(MSA_NAMESPACE) \
 		-f helm/mariadb/mariadb-main-game/values.yaml
 
-install-mariadb: \
-	install-mariadb-user \
-	install-mariadb-auth \
-	install-mariadb-chat \
 
 uninstall-mariadb-user:
 	@printf "$(COLOR_YELLOW)==> Uninstalling MariaDB User$(COLOR_RESET)\n"
@@ -137,6 +134,12 @@ uninstall-mariadb: \
 	uninstall-mariadb-auth \
 	uninstall-mariadb-chat \
 	uninstall-mariadb-main-game
+
+install-mariadb: \
+	install-mariadb-user \
+	install-mariadb-chat \
+	install-mariadb-auth \
+	install-mariadb-main-game
 
 # ----------------------------------
 # Redis (개별/통합)
@@ -315,7 +318,7 @@ rollback-match-game:
 
 restart-match-game:
 	@printf "$(COLOR_BLUE)==> Restarting Match Game Server$(COLOR_RESET)\n"
-	kubectl rollout restart statefulset match-game-server -n (MSA_NAMESPACE)
+	kubectl rollout restart statefulset match-game-server -n $(MSA_NAMESPACE)
 
 # ----------------------------------
 # Traefik
@@ -353,7 +356,7 @@ delete-metallb:
 # ----------------------------------
 # All-in-One
 # ----------------------------------
-install: apply-local-path create-namespace apply-secrets \
+install: add-helm-repo apply-local-path create-namespace apply-secrets \
 	install-mariadb install-redis install-kafka
 
 deploy-all: deploy-user deploy-auth deploy-chat deploy-file deploy-main-game deploy-match-game deploy-traefik
