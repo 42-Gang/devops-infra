@@ -1,54 +1,27 @@
-replicaCount: 3
-
 image:
   tag: 4.0.0-debian-12-r3
 
 zookeeper:
   enabled: false
 
-auth:
-  enabled: false  # 💥 반드시 false
-
-sasl: { }  # 💥 아예 비워야 템플릿에서 SASL 생성 안 함
-
-listeners:
-  client:
-    name: CLIENT
-    containerPort: 9092
-    protocol: PLAINTEXT
-    sslClientAuth: ""
-
-  interbroker:
-    name: INTERNAL
-    containerPort: 9094
-    protocol: PLAINTEXT
-    sslClientAuth: ""
-
-  controller:
-    name: CONTROLLER
-    containerPort: 9093
-    protocol: PLAINTEXT
-    sslClientAuth: ""
-
 broker:
-  persistence:
-    enabled: true
-    size: 3Gi
-    storageClass: local-path
-  persistentVolumeClaimRetentionPolicy:
-    enabled: true
-    whenDeleted: Retain
-    whenScaled: Retain
-  resources:
-    requests:
-      cpu: 50m
-      memory: 2Gi
-    limits:
-      cpu: 100m
-      memory: 2Gi
+  replicaCount: 0
 
 controller:
-  replicaCount: 3
+  replicaCount: 1
+  controllerOnly: false
+  minId: 0
+
+  overrideConfiguration:
+    process.roles: "broker,controller"
+    listener.security.protocol.map: "CLIENT:PLAINTEXT,INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+    inter.broker.listener.name: "INTERNAL"
+    controller.listener.names: "CONTROLLER"
+    log.dirs: "/bitnami/kafka/data"
+    #    controller.quorum.voters: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093,1@kafka-controller-1.kafka-controller-headless.msa.svc.cluster.local:9093,2@kafka-controller-2.kafka-controller-headless.msa.svc.cluster.local:9093"
+    controller.quorum.voters: "0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093"
+    offsets.topic.replication.factor: 1
+
   persistence:
     enabled: true
     size: 3Gi
@@ -57,27 +30,14 @@ controller:
     enabled: true
     whenDeleted: Retain
     whenScaled: Retain
+
   resources:
     requests:
-      cpu: 50m
+      cpu: 200m
       memory: 2Gi
     limits:
-      cpu: 100m
+      cpu: 300m
       memory: 2Gi
 
-  configurationOverrides:
-    process.roles: broker,controller
-    advertised.listeners: PLAINTEXT://kafka-controller-$(HOSTNAME##*-).kafka-controller-headless.msa.svc.cluster.local:9092
-    controller.listener.names: CONTROLLER
-    listener.security.protocol.map: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-    security.inter.broker.protocol: PLAINTEXT
-    inter.broker.listener.name: PLAINTEXT
-    log.dirs: /bitnami/kafka/data
-    controller.quorum.voters: |
-      0@kafka-controller-0.kafka-controller-headless.msa.svc.cluster.local:9093,
-      1@kafka-controller-1.kafka-controller-headless.msa.svc.cluster.local:9093,
-      2@kafka-controller-2.kafka-controller-headless.msa.svc.cluster.local:9093
-
-headless:
-  annotations:
-    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+  podManagementPolicy: Parallel
+  minReadySeconds: 0
