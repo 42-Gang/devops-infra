@@ -102,3 +102,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
                   key: FRONT_URL
+            - name: JAEGER_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: JAEGER_ENDPOINT
