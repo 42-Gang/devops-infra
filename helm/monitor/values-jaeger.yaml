@@ -1,19 +1,14 @@
+provisionDataStore:
+  cassandra: false
+
 allInOne:
   enabled: true
-collector:
-  otlp:
-    enabled: true
-ui:
-  enabled: true
-query:
-  enabled: true
-service:
-  name: jaeger
-serviceAccount:
-  create: true
-ingester:
-  enabled: false
+storage:
+  type: memory
+
 agent:
   enabled: false
-ingress:
+collector:
+  enabled: false
+query:
   enabled: false
