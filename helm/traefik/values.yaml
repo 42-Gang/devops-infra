@@ -52,3 +52,12 @@ resources:
   limits:
     cpu: "300m"
     memory: "512Mi"
+
+tracing:
+  serviceName: "traefik"
+  otlp:
+    enabled: true
+    http:
+      enabled: true
+      endpoint: "http://jaeger-collector.monitor.svc.cluster.local:4318/v1/traces"
+      header: { }
