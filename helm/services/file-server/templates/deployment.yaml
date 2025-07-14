@@ -75,6 +75,11 @@ spec:
                   key: FILE_SERVER_BASE_URL
             - name: FASTIFY_PORT
               value: "{{ .Values.service.port }}"
+            - name: JAEGER_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: JAEGER_ENDPOINT
       volumes:
         - name: upload-volume
           persistentVolumeClaim:
