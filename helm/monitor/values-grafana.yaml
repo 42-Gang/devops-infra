@@ -1,25 +1,10 @@
-admin:
-  existingSecret: ""    # 기본 admin/password
-service:
-  type: ClusterIP
-  port: 3000
-datasources:
-  datasources.yaml:
-    apiVersion: 1
-    datasources:
-      - name: Loki
-        type: loki
-        url: http://loki.monitor.svc.cluster.local:3100
-        access: proxy
-        isDefault: true
-dashboardProviders:
-  dashboardproviders.yaml:
-    apiVersion: 1
-    providers:
-      - name: 'default'
-        orgId: 1
-        folder: ''
-        type: file
-        disableDeletion: false
-        options:
-          path: /var/lib/grafana/dashboards
+adminUser: admin
+adminPassword: admin
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
