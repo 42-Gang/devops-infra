@@ -52,6 +52,7 @@ add-helm-repo:
 	helm repo add grafana https://grafana.github.io/helm-charts
 	helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
 	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+	helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 	helm repo update
 
 # ----------------------------------
@@ -354,23 +355,15 @@ delete-metallb:
 deploy-loki:
 	helm upgrade --install loki grafana/loki \
 		--namespace monitor \
-		-f values-loki.yaml
+		-f ./helm/monitor/values-loki.yaml
 
 delete-loki:
 	helm uninstall loki -n monitor
 
-deploy-promtail:
-	helm upgrade --install promtail grafana/promtail \
-		--namespace monitor \
-		-f values-promtail.yaml
-
-delete-promtail:
-	helm uninstall promtail -n monitor
-
 deploy-grafana:
 	helm upgrade --install grafana grafana/grafana \
 		--namespace monitor \
-		-f values-grafana.yaml
+		-f ./helm/monitor/values-grafana.yaml
 
 delete-grafana:
 	helm uninstall grafana -n monitor
@@ -378,32 +371,46 @@ delete-grafana:
 deploy-jaeger:
 	helm upgrade --install jaeger jaegertracing/jaeger \
 		--namespace monitor \
-		-f values-jaeger.yaml
+		-f ./helm/monitor/values-jaeger.yaml
 
 delete-jaeger:
 	helm uninstall jaeger -n monitor
 
-deploy-prometheus:
-	helm upgrade --install prometheus prometheus-community/prometheus \
+deploy-otel-collector:
+	helm upgrade --install otel-collector open-telemetry/opentelemetry-collector \
 		--namespace monitor \
-		-f values-prometheus.yaml
+		-f ./helm/monitor/values-otel-collector.yaml
 
-delete-prometheus:
-	helm uninstall prometheus -n monitor
+delete-otel-collector:
+	helm uninstall otel-collector -n monitor
+
+deploy-alloy:
+	helm install my-alloy  grafana/alloy \
+		--namespace monitor \
+		-f ./helm/monitor/values-alloy.yaml
+
+delete-alloy:
+	helm uninstall my-alloy -n monitor
+
+apply-alloy-config:
+	kubectl create configmap alloy-config \
+		--from-file=config.alloy=./helm/monitor/config.alloy \
+		-n monitor \
+		--dry-run=client -o yaml | kubectl apply -f -
+
+restart-alloy:
+	kubectl rollout restart daemonset/my-alloy -n monitor
+
 
 deploy-all-monitoring: \
 	deploy-loki \
-	deploy-promtail \
 	deploy-grafana \
 	deploy-jaeger \
-	deploy-prometheus
 
 delete-all-monitoring: \
 	delete-loki \
-	delete-promtail \
 	delete-grafana \
 	delete-jaeger \
-	delete-prometheus
 
 # ----------------------------------
 # All-in-One
@@ -431,9 +438,11 @@ reset:
 	helm uninstall mariadb-user     -n $(MSA_NAMESPACE) || true
 	helm uninstall mariadb-auth     -n $(MSA_NAMESPACE) || true
 	helm uninstall mariadb-chat     -n $(MSA_NAMESPACE) || true
+	helm uninstall mariadb-main-game -n $(MSA_NAMESPACE) || true
 	helm uninstall redis-user       -n $(MSA_NAMESPACE) || true
 	helm uninstall redis-auth       -n $(MSA_NAMESPACE) || true
 	helm uninstall redis-chat       -n $(MSA_NAMESPACE) || true
+	helm uninstall redis-main-game  -n $(MSA_NAMESPACE) || true
 	helm uninstall kafka            -n $(MSA_NAMESPACE) || true
 	helm uninstall traefik          -n $(TRAEFIK_NAMESPACE) || true
 	helm uninstall $(USER_SERVER_IMAGE) -n $(MSA_NAMESPACE) || true
@@ -442,6 +451,10 @@ reset:
 	helm uninstall file-server      -n $(MSA_NAMESPACE) || true
 	helm uninstall main-game-server -n $(MSA_NAMESPACE) || true
 	helm uninstall match-game-server -n $(MSA_NAMESPACE) || true
+	helm uninstall grafana         -n $(MONITOR_NAMESPACE) || true
+	helm uninstall jaeger          -n $(MONITOR_NAMESPACE) || true
+	helm uninstall prometheus      -n $(MONITOR_NAMESPACE) || true
+	helm uninstall loki            -n $(MONITOR_NAMESPACE) || true
 	kubectl delete all,cm,secret,pvc -n $(MSA_NAMESPACE) || true
 	kubectl delete all,cm,secret,pvc          || true
 
