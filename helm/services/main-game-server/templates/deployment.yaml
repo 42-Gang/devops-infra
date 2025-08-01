@@ -82,3 +82,8 @@ spec:
                   key: GOOGLE_REFRESH_TOKEN
             - name: FASTIFY_PORT
               value: "{{ .Values.service.port }}"
+            - name: JAEGER_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: JAEGER_ENDPOINT
