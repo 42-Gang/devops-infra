@@ -25,13 +25,6 @@ loki:
   ruler:
     enable_api: true
 
-  persistence:
-    enabled: true
-    storageClassName: local-path
-    accessModes:
-      - ReadWriteOnce
-    size: 20Gi
-
 minio:
   enabled: true
 
@@ -76,7 +69,7 @@ singleBinary:
 
   persistence:
     enabled: true
-    storageClassName: standard   # 실제 스토리지 클래스 이름
+    storageClass: local-path
     accessModes:
       - ReadWriteOnce
     size: 20Gi
@@ -99,3 +92,5 @@ chunksCache:
     limits:
       cpu: 300m
       memory: 128Mi
+
+
