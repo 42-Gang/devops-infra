@@ -1,6 +1,7 @@
 local.file_match "podlogs" {
   path_targets = [
     { __path__ = "/var/log/pods/msa*/*/*.log" },
+    { __path__ = "/var/log/pods/traefik*/*/*.log" },
   ]
 }
 
