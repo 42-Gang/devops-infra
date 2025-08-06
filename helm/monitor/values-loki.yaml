@@ -15,7 +15,8 @@ loki:
       dir: /data/loki/tsdb       # TSDB 전체 디렉터리
     filesystem:
       directory: /data/loki/chunks
-
+  storage:
+    type: filesystem
   pattern_ingester:
     enabled: true
   limits_config:
@@ -71,7 +72,7 @@ singleBinary:
       memory: 512Mi
     limits:
       cpu: 300m
-      memory: 1Gi
+      memory: 2Gi
 
   persistence:
     enabled: true
@@ -80,11 +81,21 @@ singleBinary:
       - ReadWriteOnce
     size: 20Gi
 
+resultsCache:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 64Mi
+    limits:
+      cpu: 300m
+      memory: 128Mi
+
+
 chunksCache:
   resources:
     requests:
       cpu: 100m
-      memory: 512Mi
+      memory: 64Mi
     limits:
       cpu: 300m
-      memory: 1Gi
+      memory: 128Mi
