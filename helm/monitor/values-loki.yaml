@@ -98,3 +98,5 @@ chunksCache:
       memory: 128Mi
 
 
+persistence:
+  storageClass: local-path
