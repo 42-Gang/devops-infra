@@ -1,14 +1,24 @@
-service:
-  type: ClusterIP
-  port: 9090
+grafana:
+  enabled: false
 
-# 스크랩 타겟
-server:
-  global:
-    scrape_interval: 15s
-    evaluation_interval: 15s
-  additionalScrapeConfigs:
-    - job_name: 'auth-server'
-      metrics_path: /metrics
-      static_configs:
-        - targets: [ 'auth-server.monitor.svc.cluster.local:9464' ]
+alertmanager:
+  enabled: false
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+
+
+prometheus:
+  prometheusSpec:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 512Mi
+      limits:
+        cpu: 300m
+        memory: 2Gi
+    replicas: 1
