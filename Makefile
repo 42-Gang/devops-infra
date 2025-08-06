@@ -401,6 +401,14 @@ apply-alloy-config:
 restart-alloy:
 	kubectl rollout restart daemonset/my-alloy -n monitor
 
+deploy-prometheus:
+	helm upgrade --install prometheus-stack \
+		prometheus-community/kube-prometheus-stack \
+		-f ./helm/monitor/values-prometheus.yaml \
+		-n monitor
+
+delete-prometheus:
+	helm uninstall prometheus-stack -n monitor
 
 deploy-all-monitoring: \
 	deploy-loki \
