@@ -414,11 +414,16 @@ deploy-all-monitoring: \
 	deploy-loki \
 	deploy-grafana \
 	deploy-jaeger \
+	deploy-alloy \
+	apply-alloy-config \
+	deploy-prometheus
 
 delete-all-monitoring: \
 	delete-loki \
 	delete-grafana \
 	delete-jaeger \
+	delete-alloy \
+	delete-prometheus
 
 # ----------------------------------
 # All-in-One
