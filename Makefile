@@ -385,7 +385,7 @@ delete-otel-collector:
 	helm uninstall otel-collector -n monitor
 
 deploy-alloy:
-	helm install my-alloy  grafana/alloy \
+	helm upgrade --install my-alloy  grafana/alloy \
 		--namespace monitor \
 		-f ./helm/monitor/values-alloy.yaml
 
