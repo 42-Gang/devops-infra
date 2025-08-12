@@ -111,3 +111,12 @@ spec:
         - name: match-game-server-0
           port: 3000
           namespace: msa
+
+    - match: PathPrefix(`/ws/match-game`) && Query(`server`,`match-game-server-0`)
+      kind: Rule
+      middlewares:
+        - name: ws-middleware
+      services:
+        - name: match-game-server-0
+          port: 3000
+          namespace: msa
