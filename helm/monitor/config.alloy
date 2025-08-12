@@ -11,55 +11,46 @@ loki.source.file "filelog" {
 }
 
 loki.process "parse_and_label" {
+
+  stage.cri {}
+
+
+  stage.label_drop { values = ["filename", "stream"] }
+
+
   stage.json {
+    source = "content"
     expressions = {
-      raw = "log",
+      level        = "level",
+      timestamp    = "timestamp",
+      hostname     = "hostname",
+      trace_id     = "trace_id",
+      span_id      = "span_id",
+      time         = "time",
+      reqId        = "reqId",
+      trace_flags  = "trace_flags",
+      res          = "res",
+      responseTime = "responseTime",
+      msg          = "msg",
     }
     drop_malformed = false
   }
 
-  stage.json {
-    source      = "raw"
-    expressions = {
-      level         = "level",
-      timestamp     = "timestamp",
-      hostname      = "hostname",
-      trace_id      = "trace_id",
-      span_id       = "span_id",
-      time          = "time",
-      reqId         = "reqId",
-      trace_flags    = "trace_flags",
-      res            = "res",
-      responseTime  = "responseTime",
-      msg           = "msg",
-    }
-    drop_malformed = false
-  }
-
-  stage.output {
-    source = "raw"
-  }
+  stage.output { source = "content" }
 
   stage.labels {
     values = {
-      pod      = "${resource.attributes.k8s.pod.name}",
-      level     = "level",
-      hostname  = "hostname",
-      trace_id  = "trace_id",
-      span_id   = "span_id",
+      level    = "level",
+      hostname = "hostname",
     }
   }
 
-  forward_to = [
-    loki.write.loki.receiver,
-  ]
+  forward_to = [ loki.write.loki.receiver ]
 }
-
-
 
 loki.write "loki" {
   endpoint {
     url     = "http://loki-gateway.monitor.svc.cluster.local/loki/api/v1/push"
-    headers = { "X-Scope-OrgID" = "pingpong" }
+    headers = { "X-Scope-OrgID" = "pingpong1" }
   }
 }
