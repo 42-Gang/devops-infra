@@ -11,12 +11,20 @@ loki.source.file "filelog" {
 }
 
 loki.process "parse_and_label" {
-
   stage.cri {}
 
+  stage.label_drop { values = ["stream"] }
 
-  stage.label_drop { values = ["filename", "stream"] }
-
+  stage.regex {
+    source = "filename",
+    expression = "/var/log/pods/(?P<namespace>[^_/]+)_[^/]+/(?P<container>[^/]+)/"
+  }
+  stage.labels {
+    values = {
+      namespace = "namespace",
+      container = "container",
+    }
+  }
 
   stage.json {
     source = "content"
