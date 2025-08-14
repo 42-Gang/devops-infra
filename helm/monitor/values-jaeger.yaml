@@ -3,6 +3,14 @@ provisionDataStore:
 
 allInOne:
   enabled: true
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 256m
+      memory: 128Mi
+
 storage:
   type: memory
 
