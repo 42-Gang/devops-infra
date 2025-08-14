@@ -1,13 +1,20 @@
 additionalArguments:
-  - "--entryPoints.web.address=:80"   # ← Traefik이 직접 80포트를 열게 함
+  - "--entryPoints.web.address=:80"
   - "--entryPoints.websecure.address=:443"
   - "--api.dashboard=true"
   - "--api.insecure=true"
   - "--providers.kubernetescrd"
   - "--accesslog=true"
+  - "--accesslog.format=json"
+  - "--accesslog.fields.defaultmode=keep"
+  - "--accesslog.fields.headers.defaultmode=keep"
+  - "--accesslog.fields.headers.names.traceparent=keep"
+  - "--accesslog.fields.headers.names.baggage=keep"
+
 
 service:
   type: LoadBalancer
+
 hostNetwork: false
 
 ports:
@@ -44,6 +51,15 @@ log:
 
 accessLog:
   enabled: true
+  format: json
+  fields:
+    defaultMode: keep
+    headers:
+      defaultMode: keep
+      names:
+        traceparent: keep
+        baggage: keep
+
 
 resources:
   requests:
