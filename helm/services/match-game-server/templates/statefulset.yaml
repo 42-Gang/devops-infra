@@ -60,3 +60,13 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
                   key: JAEGER_ENDPOINT
+            - name: SCORE_TO_WIN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: SCORE_TO_WIN
+            - name: GRAVITY_Y
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: GRAVITY_Y
