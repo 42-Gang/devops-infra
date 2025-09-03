@@ -67,3 +67,9 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.env.SECRET_NAME }}
                   key: JAEGER_ENDPOINT
+            - name: GAME_SERVER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.env.SECRET_NAME }}
+                  key: GAME_SERVER_URL
+
