@@ -76,6 +76,17 @@ spec:
           port: 3000
           namespace: msa
 
+    - match: PathPrefix(`/api/v1/game`)
+      kind: Rule
+      middlewares:
+        - name: cors
+        - name: auth-middleware
+      services:
+        - name: main-game-server
+          port: 3000
+          namespace: msa
+
+
     - match: PathPrefix(`/ws/user`)
       kind: Rule
       middlewares:
