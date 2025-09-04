@@ -410,6 +410,15 @@ deploy-prometheus:
 delete-prometheus:
 	helm uninstall prometheus-stack -n monitor
 
+deploy-cassandra:
+	kubectl apply -f secrets/cassandra-secret.yaml -n monitor
+	helm upgrade --install cassandra  \
+		oci://registry-1.docker.io/bitnamicharts/cassandra \
+		-n monitor -f ./helm/monitor/values-cassandra.yaml
+
+delete-cassandra:
+	helm uninstall cassandra -n monitor
+
 deploy-all-monitoring: \
 	deploy-loki \
 	deploy-grafana \

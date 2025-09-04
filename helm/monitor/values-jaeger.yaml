@@ -1,22 +1,28 @@
 provisionDataStore:
   cassandra: false
 
-allInOne:
-  enabled: true
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 256m
-      memory: 128Mi
-
 storage:
-  type: memory
+  type: cassandra
+  cassandra:
+    host: cassandra.monitor.svc.cluster.local
+    port: 9042
+    user: cassandra
+    existingSecret: cassandra-admin-auth
+
+
+collector:
+  enabled: true
+  service:
+    otlp:
+      grpc:
+        name: otlp-grpc
+        port: 4317
+      http:
+        name: otlp-http
+        port: 4318
+query:
+  enabled: true
 
 agent:
   enabled: false
-collector:
-  enabled: false
-query:
-  enabled: false
+

@@ -1,0 +1,14 @@
+dbUser:
+  existingSecret:
+    name: cassandra-admin-auth
+    namespace: monitor
+
+
+resourcesPreset:
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "200m"
+      memory: "512Mi"
