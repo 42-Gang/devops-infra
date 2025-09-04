@@ -13,3 +13,8 @@ resources:
   limits:
     cpu: "200m"
     memory: "512Mi"
+
+
+persistence:
+  storageClass: local-path
+  size: 6Gi
