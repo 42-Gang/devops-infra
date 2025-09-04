@@ -10,5 +10,15 @@ persistence:
   storageClass: local-path
   size: 6Gi
 
-jvm:
-  maxHeapSize: "1024m"
+
+livenessProbe:
+  initialDelaySeconds: 240
+  periodSeconds: 30
+  timeoutSeconds: 30
+  failureThreshold: 5
+
+readinessProbe:
+  initialDelaySeconds: 180
+  periodSeconds: 10
+  timeoutSeconds: 30
+  failureThreshold: 5
