@@ -1,8 +1,21 @@
 replicas: 1
 minimumMasterNodes: 1
 
+antiAffinity: "soft"
+clusterInitialMasterNodes: "elasticsearch-master-0"
 
 volumeClaimTemplate:
+  storageClassName: "local-path"
   resources:
     requests:
       storage: 6Gi
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "1Gi"
+  limits:
+    cpu: "1000m"
+    memory: "2Gi"
+
+esJavaOpts: "-Xms512m -Xmx512m"
