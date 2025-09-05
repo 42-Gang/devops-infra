@@ -410,6 +410,14 @@ deploy-prometheus:
 delete-prometheus:
 	helm uninstall prometheus-stack -n monitor
 
+deploy-elasticsearch:
+	helm upgrade --install elasticsearch elastic/elasticsearch \
+		--namespace monitor \
+		-f ./helm/monitor/values-elasticsearch.yaml
+
+delete-elasticsearch:
+	helm uninstall elasticsearch -n monitor
+
 deploy-cassandra:
 	kubectl apply -f secrets/cassandra-secret.yaml -n monitor
 	helm upgrade --install cassandra  \

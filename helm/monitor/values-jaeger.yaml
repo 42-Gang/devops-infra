@@ -1,8 +1,21 @@
 provisionDataStore:
   cassandra: false
+  elasticsearch: false
 
 storage:
-  type: badger
+  type: elasticsearch
+  elasticsearch:
+    host: elasticsearch-master.monitor.svc  # 인증서에 유효한 이름으로 변경
+    port: 9200
+    scheme: https
+    user: elastic
+    password: GeyGjl13QIh8HjA5
+    tls:
+      enabled: true  # true로 변경
+      secretName: es-tls-secret
+      mountPath: /es-tls/ca-cert.pem
+      subPath: ca-cert.pem
+      ca: /es-tls/ca-cert.pem
 
 collector:
   enabled: true
@@ -14,9 +27,9 @@ collector:
       http:
         name: otlp-http
         port: 4318
+
 query:
   enabled: true
 
 agent:
   enabled: false
-
