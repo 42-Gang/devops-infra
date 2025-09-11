@@ -25,12 +25,9 @@ loki:
   ruler:
     enable_api: true
 
+
 minio:
-  enabled: true
-  persistence:
-    enabled: true
-    size: 20Gi
-    storageClass: local-path
+  enabled: false
 
 deploymentMode: SingleBinary
 
@@ -74,8 +71,7 @@ singleBinary:
   persistence:
     enabled: true
     storageClass: local-path
-    accessModes:
-      - ReadWriteOnce
+    accessModes: [ ReadWriteOnce ]
     size: 20Gi
 
 resultsCache:
