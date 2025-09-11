@@ -17,10 +17,15 @@ service:
 
 hostNetwork: false
 
+
 ports:
   web:
     port: 80
     protocol: TCP
+    transport:
+      respondingTimeouts:
+        readTimeout: 15s
+        writeTimeout: 15s
   websecure:
     port: 443
     protocol: TCP
@@ -77,3 +82,5 @@ tracing:
       enabled: true
       endpoint: "http://jaeger-collector.monitor.svc.cluster.local:4318/v1/traces"
       header: { }
+
+
