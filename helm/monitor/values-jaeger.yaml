@@ -9,7 +9,7 @@ storage:
     port: 9200
     scheme: https
     user: elastic
-    password: GeyGjl13QIh8HjA5
+    password: RtHANpHt6xdCIG2y
     tls:
       enabled: true  # true로 변경
       secretName: es-tls-secret

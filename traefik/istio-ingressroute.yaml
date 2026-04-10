@@ -1,0 +1,15 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: istio-system-ingress
+  namespace: istio-system
+spec:
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - match: Host(`kiali.pingpong.n-e.kr`)
+      kind: Rule
+      services:
+        - name: kiali
+          port: 20001
